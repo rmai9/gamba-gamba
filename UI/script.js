@@ -2,24 +2,59 @@ const loginButton = document.querySelector(".login-btn");
 const loginScreen = document.querySelector(".page-wrap");
 const mainMenu = document.getElementById("mainMenu");
 const blackMarketBtn = document.getElementById("blackMarketBtn");
+const logoutBtn = document.getElementById("logoutBtn");
 
 const historyBtn = document.getElementById("historyBtn");
 const historyScreen = document.getElementById("historyScreen");
 const backToMenuBtn = document.getElementById("backToMenuBtn");
 
+const bgMusic = document.getElementById("bgMusic");
+
+
+bgMusic.volume = 0.12;
+
+let musicStarted = false;
+
+function startMusic() {
+  if (musicStarted) return;
+
+  bgMusic.play().then(function () {
+    musicStarted = true;
+  }).catch(function (error) {
+    console.log("Audio could not play yet:", error);
+  });
+}
+
+document.addEventListener("click", startMusic);
+
 loginButton.addEventListener("click", function () {
+  startMusic();
+
   loginScreen.classList.add("hidden");
   mainMenu.classList.remove("hidden");
 });
 
 historyBtn.addEventListener("click", function () {
+  startMusic();
+
   mainMenu.classList.add("hidden");
   historyScreen.classList.remove("hidden");
 });
 
 backToMenuBtn.addEventListener("click", function () {
+  startMusic();
+
   historyScreen.classList.add("hidden");
   mainMenu.classList.remove("hidden");
+});
+
+logoutBtn.addEventListener("click", function () {
+  mainMenu.classList.add("hidden");
+  historyScreen.classList.add("hidden");
+  loginScreen.classList.remove("hidden");
+
+  bPresses = 0;
+  blackMarketBtn.classList.add("hidden");
 });
 
 let bPresses = 0;
