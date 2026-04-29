@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>RPS Royale</title>
+
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+</head>
+
+<body>
+
+  <!-- LOGIN SCREEN -->
+  <div class="page-wrap">
+    <div class="casino-frame">
+
+      <div class="top-bar">
+        ★ RPS ROYALE ONLINE ★ PLAYER LOGIN ★ HIGH-STAKES DUELS ★
+      </div>
+
+      <div class="marquee">
+        <span>
+          ROCK • PAPER • SCISSORS • PLACE YOUR BET • ENTER THE DUEL ARENA • WIN BIG TONIGHT •
+        </span>
+      </div>
+
+      <main class="content">
+
+        <section class="hero">
+          <h1>RPS<br>Royale</h1>
+          <div class="subtitle">Rock Paper Scissors Betting Arena</div>
+
+          <div class="slot-panel">
+            <div class="slot">✊</div>
+            <div class="slot">✋</div>
+            <div class="slot">✌️</div>
+          </div>
+
+          <div class="promo-box">
+            <strong class="blink">NEW!</strong> Challenge players in high-stakes Rock Paper Scissors matches and climb the leaderboard.
+          </div>
+
+          <div class="badge-row">
+            <div class="badge">SECURE BETS</div>
+            <div class="badge">RPS TABLES</div>
+            <div class="badge">LIVE DUELS</div>
+          </div>
+        </section>
+
+        <aside class="login-box">
+          <div class="login-title">Player Login</div>
+
+          <form>
+            <label for="username">Username</label>
+            <input id="username" type="text" placeholder="Enter username" />
+
+            <label for="password">Password</label>
+            <input id="password" type="password" placeholder="Enter password" />
+
+            <label class="remember">
+              <input type="checkbox" />
+              Remember my player ID
+            </label>
+
+            <button class="login-btn" type="button">ENTER RPS ARENA</button>
+
+            <div class="links">
+              <a href="#">Forgot password?</a><br />
+              <a href="#">Create new account</a><br />
+              <a href="#">Help desk</a>
+            </div>
+          </form>
+
+          <div class="side-ad">
+            ★ TODAY'S FEATURE ★<br />
+            Rock beats scissors. Paper beats rock. Scissors beats paper.<br />
+            <span class="blink">Login to place your first bet!</span>
+          </div>
+        </aside>
+
+      </main>
+
+      <footer class="footer">
+        © 2004 RPS Royale Merced Entertainment
+      </footer>
+
+    </div>
+  </div>
+
+  <!-- MAIN MENU -->
+  <div class="main-menu hidden" id="mainMenu">
+    <div class="menu-frame">
+      <div class="top-bar">
+        ★ RPS ROYALE ONLINE ★ MAIN MENU ★ HIGH-STAKES DUELS ★
+      </div>
+
+      <h1 class="title-glow">
+        <span class="dollar">$</span>
+        RPS Royale
+        <span class="dollar">$</span>
+      </h1>
+
+      <p class="menu-subtitle">Welcome back, high roller.</p>
+
+      <div class="menu-buttons">
+        <button class="menu-btn play-btn" type="button">PLAY</button>
+        <button class="menu-btn" id="historyBtn" type="button">MATCH HISTORY</button>
+        <button class="menu-btn black-market hidden" id="blackMarketBtn" type="button">
+          BLACK MARKET
+        </button>
+      </div>
+
+      <p class="secret-hint">Press B three times to reveal hidden access...</p>
+    </div>
+  </div>
+
+  <!-- MATCH HISTORY SCREEN -->
+<div class="history-screen hidden" id="historyScreen">
+  <div class="history-frame">
+    <div class="top-bar">
+      ★ RPS ROYALE ONLINE ★ MATCH HISTORY ★ PLAYER RECORD ★
+    </div>
+
+    <h1 class="title-glow">Match History</h1>
+
+    <!-- STATS (placeholders) -->
+    <div class="stats-row">
+      <div class="stat-box">
+        <span>Wins</span>
+        <strong id="totalWins">--</strong>
+      </div>
+
+      <div class="stat-box">
+        <span>Losses</span>
+        <strong id="totalLosses">--</strong>
+      </div>
+
+      <div class="stat-box">
+        <span>Net Money</span>
+        <strong id="netMoney">$0</strong>
+      </div>
+    </div>
+
+    <!-- EMPTY TABLE -->
+    <table class="history-table">
+      <thead>
+        <tr>
+          <th>Match</th>
+          <th>Result</th>
+          <th>Player</th>
+          <th>Opponent</th>
+          <th>Money</th>
+        </tr>
+      </thead>
+
+      <tbody id="historyTableBody">
+        <!-- Data will be inserted here dynamically -->
+      </tbody>
+    </table>
+
+    <!-- EMPTY STATE -->
+    <p class="empty-history" id="emptyHistoryMsg">
+      No matches played yet...
+    </p>
+
+    <button class="menu-btn back-btn" id="backToMenuBtn" type="button">
+      BACK TO MAIN MENU
+    </button>
+  </div>
+</div>
+
+</body>
+</html>
