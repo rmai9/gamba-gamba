@@ -9,9 +9,9 @@ const historyScreen = document.getElementById("historyScreen");
 const backToMenuBtn = document.getElementById("backToMenuBtn");
 
 const bgMusic = document.getElementById("bgMusic");
-
-
-bgMusic.volume = 0.12;
+bgMusic.volume = 0.04;
+const clickSound = document.getElementById("clickSound");
+clickSound.volume = 0.3;
 
 let musicStarted = false;
 
@@ -100,3 +100,22 @@ function renderMatchHistory(matches) {
     tableBody.appendChild(row);
   });
 }
+
+const blackMarketSound = new Audio("audio/blackmarket.mp3");
+blackMarketSound.volume = 0.35;
+
+document.addEventListener("click", (e) => {
+  const btn = e.target.closest("button");
+  if (!btn) return;
+
+  // BLACK MARKET BUTTON → different sound
+  if (btn.id === "blackMarketBtn") {
+    blackMarketSound.currentTime = 0;
+    blackMarketSound.play().catch(() => {});
+    return;
+  }
+
+  // ALL OTHER BUTTONS
+  clickSound.currentTime = 0;
+  clickSound.play().catch(() => {});
+});
