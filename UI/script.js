@@ -14,22 +14,52 @@ const replayPrice = document.getElementById("replayPrice");
 const overwritePrice = document.getElementById("overwritePrice");
 
 const bgMusic = document.getElementById("bgMusic");
+const blackMarketMusic = document.getElementById("blackMarketMusic");
 const clickSound = document.getElementById("clickSound");
-
 
 clickSound.volume = 0.3;
 bgMusic.volume = 0.04;
+blackMarketMusic.volume = 0.04;
+
+const blackMarketSound = new Audio("audio/blackmarket.mp3");
+blackMarketSound.volume = 0.35;
 
 let musicStarted = false;
+let currentMusic = bgMusic;
 
 function startMusic() {
   if (musicStarted) return;
 
   bgMusic.play().then(function () {
     musicStarted = true;
+    currentMusic = bgMusic;
   }).catch(function (error) {
     console.log("Audio could not play yet:", error);
   });
+}
+
+function playMenuMusic() {
+  if (!musicStarted) return;
+
+  blackMarketMusic.pause();
+
+  if (bgMusic.paused) {
+    bgMusic.play().catch(() => {});
+  }
+
+  currentMusic = bgMusic;
+}
+
+function playBlackMarketMusic() {
+  if (!musicStarted) return;
+
+  bgMusic.pause();
+
+  if (blackMarketMusic.paused) {
+    blackMarketMusic.play().catch(() => {});
+  }
+
+  currentMusic = blackMarketMusic;
 }
 
 document.addEventListener("click", startMusic);
@@ -39,6 +69,8 @@ loginButton.addEventListener("click", function () {
 
   loginScreen.classList.add("hidden");
   mainMenu.classList.remove("hidden");
+
+  playMenuMusic();
 });
 
 historyBtn.addEventListener("click", function () {
@@ -46,6 +78,8 @@ historyBtn.addEventListener("click", function () {
 
   mainMenu.classList.add("hidden");
   historyScreen.classList.remove("hidden");
+
+  playMenuMusic();
 });
 
 backToMenuBtn.addEventListener("click", function () {
@@ -53,15 +87,22 @@ backToMenuBtn.addEventListener("click", function () {
 
   historyScreen.classList.add("hidden");
   mainMenu.classList.remove("hidden");
+
+  playMenuMusic();
 });
 
 logoutBtn.addEventListener("click", function () {
   mainMenu.classList.add("hidden");
   historyScreen.classList.add("hidden");
+  blackMarketScreen.classList.add("hidden");
   loginScreen.classList.remove("hidden");
+
+  document.body.classList.remove("dark-mode");
 
   bPresses = 0;
   blackMarketBtn.classList.add("hidden");
+
+  playMenuMusic();
 });
 
 let bPresses = 0;
@@ -74,6 +115,50 @@ document.addEventListener("keydown", function (event) {
       blackMarketBtn.classList.remove("hidden");
     }
   }
+});
+
+function randomMarketPrice() {
+  return Math.floor(Math.random() * 2001) + 1000;
+}
+
+function updateBlackMarketPrices() {
+  replayPrice.textContent = "$" + randomMarketPrice();
+  overwritePrice.textContent = "$" + randomMarketPrice();
+}
+
+blackMarketBtn.addEventListener("click", function () {
+  startMusic();
+
+  mainMenu.classList.add("hidden");
+  blackMarketScreen.classList.remove("hidden");
+
+  document.body.classList.add("dark-mode");
+
+  playBlackMarketMusic();
+  updateBlackMarketPrices();
+});
+
+blackMarketBackBtn.addEventListener("click", function () {
+  blackMarketScreen.classList.add("hidden");
+  mainMenu.classList.remove("hidden");
+
+  document.body.classList.remove("dark-mode");
+
+  playMenuMusic();
+});
+
+document.addEventListener("click", (e) => {
+  const btn = e.target.closest("button");
+  if (!btn) return;
+
+  if (btn.id === "blackMarketBtn" || btn.closest("#blackMarketScreen")) {
+    blackMarketSound.currentTime = 0;
+    blackMarketSound.play().catch(() => {});
+    return;
+  }
+
+  clickSound.currentTime = 0;
+  clickSound.play().catch(() => {});
 });
 
 function renderMatchHistory(matches) {
@@ -107,43 +192,3 @@ function renderMatchHistory(matches) {
     tableBody.appendChild(row);
   });
 }
-
-const blackMarketSound = new Audio("audio/blackmarket.mp3");
-blackMarketSound.volume = 0.35;
-
-document.addEventListener("click", (e) => {
-  const btn = e.target.closest("button");
-  if (!btn) return;
-
-  // Black Market entry button OR any button inside Black Market screen
-  if (btn.id === "blackMarketBtn" || btn.closest("#blackMarketScreen")) {
-    blackMarketSound.currentTime = 0;
-    blackMarketSound.play().catch(() => {});
-    return;
-  }
-
-  clickSound.currentTime = 0;
-  clickSound.play().catch(() => {});
-});
-
-function randomMarketPrice() {
-  return Math.floor(Math.random() * 2001) + 1000;
-}
-
-function updateBlackMarketPrices() {
-  replayPrice.textContent = "$" + randomMarketPrice();
-  overwritePrice.textContent = "$" + randomMarketPrice();
-}
-
-blackMarketBtn.addEventListener("click", function () {
-  mainMenu.classList.add("hidden");
-  blackMarketScreen.classList.remove("hidden");
-  document.body.classList.add("dark-mode");
-  updateBlackMarketPrices();
-});
-
-blackMarketBackBtn.addEventListener("click", function () {
-  blackMarketScreen.classList.add("hidden");
-  mainMenu.classList.remove("hidden");
-  document.body.classList.remove("dark-mode");
-});
