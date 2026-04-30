@@ -369,6 +369,17 @@ input[type="password"] {
   filter: brightness(1.1);
 }
 
+.black-market-screen .back-btn {
+  background: linear-gradient(#1a1a1a, #000000, #3b0000);
+  color: #ff3333;
+  border: 4px outset #550000;
+  text-shadow: 0 0 6px #ff0000;
+}
+
+.black-market-screen .back-btn:hover {
+  filter: brightness(1.25);
+}
+
 .secret-hint {
   margin-top: 20px;
   color: #2a0000;              /* much darker */
@@ -383,6 +394,16 @@ input[type="password"] {
 /* optional: slightly reveal on hover */
 .menu-frame:hover .secret-hint {
   opacity: 0.45;
+}
+
+.black-market-guy {
+  position: absolute;
+
+  bottom: -3px;   /* adjust up/down */
+  right: -20px;    /* adjust left/right */
+
+  width: 180px;    /* scale size */
+  pointer-events: none; /* prevents blocking clicks */
 }
 
 /* MATCH HISTORY SCREEN */
@@ -539,6 +560,130 @@ input[type="password"] {
   opacity: 1;
   background: linear-gradient(#3a0000, #1a0000);
   filter: brightness(1.2);
+}
+
+/* BLACK MARKET SCREEN */
+
+.black-market-screen {
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 12px;
+}
+
+.black-market-screen:not(.hidden) {
+  display: flex;
+}
+
+.black-market-frame {
+  width: 760px;
+  max-width: 100%;
+  border: 6px ridge #550000;
+  background:
+    linear-gradient(rgba(15,0,0,0.96), rgba(0,0,0,0.98)),
+    repeating-linear-gradient(90deg, transparent 0 18px, rgba(255,0,0,0.05) 18px 19px);
+  box-shadow:
+    0 0 18px #ff0000,
+    0 0 42px rgba(120, 0, 0, 0.8),
+    inset 0 0 35px rgba(255, 0, 0, 0.35);
+  text-align: center;
+  padding-bottom: 28px;
+  position: relative;
+}
+
+.black-market-title {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 54px;
+  color: #ff3333;
+  text-shadow:
+    2px 2px #000,
+    0 0 10px #ff0000,
+    0 0 22px #550000;
+  margin: 30px 0 8px;
+}
+
+.black-market-subtitle {
+  color: #aa3333;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.market-items {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  padding: 26px;
+}
+
+.market-card {
+  border: 4px ridge #550000;
+  background: linear-gradient(#1a0000, #050000);
+  padding: 20px;
+  box-shadow:
+    inset 0 0 18px rgba(255, 0, 0, 0.25),
+    0 0 12px rgba(255, 0, 0, 0.3);
+}
+
+.market-card h2 {
+  color: #ff4444;
+  font-size: 28px;
+  margin: 0 0 12px;
+  text-shadow: 0 0 10px #ff0000;
+}
+
+.market-card p {
+  color: #ffd0d0;
+  font-size: 13px;
+  line-height: 1.5;
+  min-height: 42px;
+}
+
+.market-price {
+  margin: 18px 0;
+  color: #00ff66;
+  font-size: 24px;
+  font-weight: bold;
+  text-shadow: 0 0 8px #00aa44;
+}
+
+.market-buy-btn {
+  width: 100%;
+  padding: 11px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 13px;
+  border: 4px outset #550000;
+  background: linear-gradient(#2a2a2a, #000000, #3b0000);
+  color: #ff3333;
+  text-shadow: 0 0 6px #ff0000;
+}
+
+.market-buy-btn:hover {
+  filter: brightness(1.25);
+}
+
+@media (max-width: 700px) {
+  .market-items {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* DARK MODE FOR BLACK MARKET */
+
+body.dark-mode {
+  background:
+    radial-gradient(circle at top, #0a0000 0%, #000000 50%, #000000 100%);
+}
+
+body.dark-mode::before {
+  opacity: 0.25;
+
+  background-image:
+    linear-gradient(45deg, rgba(80, 0, 0, 0.25) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(80, 0, 0, 0.25) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(80, 0, 0, 0.25) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(80, 0, 0, 0.25) 75%);
 }
 
 /* BLINK */

@@ -8,10 +8,17 @@ const historyBtn = document.getElementById("historyBtn");
 const historyScreen = document.getElementById("historyScreen");
 const backToMenuBtn = document.getElementById("backToMenuBtn");
 
+const blackMarketScreen = document.getElementById("blackMarketScreen");
+const blackMarketBackBtn = document.getElementById("blackMarketBackBtn");
+const replayPrice = document.getElementById("replayPrice");
+const overwritePrice = document.getElementById("overwritePrice");
+
 const bgMusic = document.getElementById("bgMusic");
-bgMusic.volume = 0.04;
 const clickSound = document.getElementById("clickSound");
+
+
 clickSound.volume = 0.3;
+bgMusic.volume = 0.04;
 
 let musicStarted = false;
 
@@ -108,14 +115,35 @@ document.addEventListener("click", (e) => {
   const btn = e.target.closest("button");
   if (!btn) return;
 
-  // BLACK MARKET BUTTON → different sound
-  if (btn.id === "blackMarketBtn") {
+  // Black Market entry button OR any button inside Black Market screen
+  if (btn.id === "blackMarketBtn" || btn.closest("#blackMarketScreen")) {
     blackMarketSound.currentTime = 0;
     blackMarketSound.play().catch(() => {});
     return;
   }
 
-  // ALL OTHER BUTTONS
   clickSound.currentTime = 0;
   clickSound.play().catch(() => {});
+});
+
+function randomMarketPrice() {
+  return Math.floor(Math.random() * 2001) + 1000;
+}
+
+function updateBlackMarketPrices() {
+  replayPrice.textContent = "$" + randomMarketPrice();
+  overwritePrice.textContent = "$" + randomMarketPrice();
+}
+
+blackMarketBtn.addEventListener("click", function () {
+  mainMenu.classList.add("hidden");
+  blackMarketScreen.classList.remove("hidden");
+  document.body.classList.add("dark-mode");
+  updateBlackMarketPrices();
+});
+
+blackMarketBackBtn.addEventListener("click", function () {
+  blackMarketScreen.classList.add("hidden");
+  mainMenu.classList.remove("hidden");
+  document.body.classList.remove("dark-mode");
 });
