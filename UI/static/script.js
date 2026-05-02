@@ -17,6 +17,7 @@ const signupBox = document.querySelector(".signup-box");
 const signupButton = document.querySelector(".signup-btn");
 const createAccountBtn = document.getElementById("createAccountBtn");
 const backToLoginBtn = document.getElementById("backToLoginBtn");
+const loginMessage = document.getElementById("loginMessage");
 
 const passwordToggle = document.getElementById("passwordToggle");
 const signupPasswordToggle = document.getElementById("signupPasswordToggle");
@@ -80,8 +81,8 @@ loginButton.addEventListener("click", async function () {
   const rememberCheckbox = document.getElementById("rememberCheckbox");
 
   if (!username || !password) {
-    alert("Please enter username and password");
-    return;
+  showLoginMessage("Please enter username and password");
+  return;
   }
 
   rememberUsernameOnLogout = rememberCheckbox.checked;
@@ -101,10 +102,10 @@ loginButton.addEventListener("click", async function () {
       mainMenu.classList.remove("hidden");
       playMenuMusic();
     } else {
-      alert(data.error || "Login failed");
+      showLoginMessage(data.error || "Login failed");
     }
   } catch (error) {
-    alert("Network error");
+    showLoginMessage("Network error");
   }
 });
 
@@ -313,6 +314,15 @@ async function checkLogin() {
     }
   } catch (error) {
     // not logged in
+  }
+}
+
+function showLoginMessage(message, type = "error") {
+  loginMessage.textContent = message;
+  loginMessage.classList.remove("hidden", "success");
+
+  if (type === "success") {
+    loginMessage.classList.add("success");
   }
 }
 

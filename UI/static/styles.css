@@ -728,6 +728,24 @@ body.dark-mode::before {
     linear-gradient(-45deg, transparent 75%, rgba(80, 0, 0, 0.25) 75%);
 }
 
+.login-message {
+  margin-top: 10px;
+  padding: 8px;
+  border: 2px ridge #ffcc00;
+  background: rgba(0, 0, 0, 0.55);
+  color: #ff6666;
+  font-size: 11px;
+  font-weight: bold;
+  text-align: center;
+  text-shadow: 0 0 6px #ff0000;
+}
+
+.login-message.success {
+  color: #00ff66;
+  border-color: #00aa44;
+  text-shadow: 0 0 6px #00aa44;
+}
+
 /* BLINK */
 
 .blink {
