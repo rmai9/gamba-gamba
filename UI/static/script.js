@@ -7,6 +7,7 @@ const logoutBtn = document.getElementById("logoutBtn");
 const historyBtn = document.getElementById("historyBtn");
 const historyScreen = document.getElementById("historyScreen");
 const backToMenuBtn = document.getElementById("backToMenuBtn");
+const mainMenuMarquee = document.getElementById("mainMenuMarquee");
 
 const blackMarketScreen = document.getElementById("blackMarketScreen");
 const blackMarketBackBtn = document.getElementById("blackMarketBackBtn");
@@ -25,6 +26,12 @@ const signupPasswordToggle = document.getElementById("signupPasswordToggle");
 const bgMusic = document.getElementById("bgMusic");
 const blackMarketMusic = document.getElementById("blackMarketMusic");
 const clickSound = document.getElementById("clickSound");
+
+const playBtn = document.getElementById("playBtn");
+const matchmakingPopup = document.getElementById("matchmakingPopup");
+const matchmakingPopup2 = document.getElementById("matchmakingPopup2");
+
+const playScreen = document.getElementById("playScreen");
 
 clickSound.volume = 0.3;
 bgMusic.volume = 0.04;
@@ -327,3 +334,40 @@ function showLoginMessage(message, type = "error") {
 }
 
 window.addEventListener("load", checkLogin);
+
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+
+playBtn.addEventListener("click", async function () {
+  bgMusic.pause();
+
+  matchmakingPopup.classList.remove("hidden");
+  mainMenu.classList.add("hidden");
+
+  randval = Math.random() * 500 + 100; // 2-4 seconds
+
+  const response  = await fetch('/api/findMatch', {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+  });
+
+  const data = await response.json();
+  
+
+  await sleep(randval);
+
+  
+
+  matchmakingPopup.classList.add("hidden");
+  document.getElementById("oppfound").textContent = "Opponent: " + data.username;
+  matchmakingPopup2.classList.remove("hidden");
+
+  await sleep(1500);
+
+  matchmakingPopup2.classList.add("hidden");
+  playScreen.classList.remove("hidden");
+
+  document.querySelector(".enemy-banner p").textContent = data.username;
+  
+
+});

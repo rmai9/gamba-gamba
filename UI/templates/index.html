@@ -135,7 +135,7 @@
       <p class="menu-subtitle">Welcome back, high roller.</p>
 
       <div class="menu-buttons">
-        <button class="menu-btn play-btn" type="button">PLAY</button>
+        <button class="menu-btn play-btn" type="button" id="playBtn">PLAY</button>
         <button class="menu-btn" id="historyBtn" type="button">MATCH HISTORY</button>
         <button class="menu-btn black-market hidden" id="blackMarketBtn" type="button">
           BLACK MARKET
@@ -146,6 +146,11 @@
       </div>
 
       <p class="secret-hint">Press B three times to reveal hidden access...</p>
+      <div class="marquee" id="mainMenuMarquee"> 
+        <span>
+          Match History goes here!!!
+        </span>
+      </div>
     </div>
   </div>
 
@@ -237,6 +242,39 @@
 
   </div>
 </div>
+
+<!-- MATCHMAKING POPUP -->
+<div class="matchmaking-popup hidden" id="matchmakingPopup">  
+  <div class="popup-content">
+    <h2>Matchmaking</h2>
+    <p>Waiting for an opponent...</p>
+  </div>
+</div>
+<div class="matchmaking-popup hidden" id="matchmakingPopup2">  
+  <div class="popup-content">
+    <h2>Match Found!</h2>
+    <p id="oppfound"> Opponent found! Get ready to play.</p>
+  </div>
+</div>
+
+<!-- PLAY SCREEN -->
+<div class="play-screen hidden" id="playScreen">
+  <div class="play-frame">
+    <div class = "banner enemy">
+      <image src="static/images/pfps/1.jpg"> </image>
+      <p> Enemy: </p>
+    </div>
+    <div class = "banner player">
+      <image src="static/images/pfps/1.jpg"> </image>
+      <p> You: </p>
+    </div>
+    <div class="play-area">
+      <button class="play-btn" id="rockBtn">✊</button>
+      <button class="play-btn" id="paperBtn">✋</button>
+      <button class="play-btn" id="scissorsBtn">✌️</button>
+  </div>
+</div>
+
 
 <audio id="bgMusic" loop>
   <source src="static/audio/menus.mp3" type="audio/mpeg">

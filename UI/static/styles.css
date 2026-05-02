@@ -718,6 +718,7 @@ body.dark-mode {
     radial-gradient(circle at top, #0a0000 0%, #000000 50%, #000000 100%);
 }
 
+
 body.dark-mode::before {
   opacity: 0.25;
 
@@ -746,6 +747,7 @@ body.dark-mode::before {
   text-shadow: 0 0 6px #00aa44;
 }
 
+
 /* BLINK */
 
 .blink {
@@ -755,3 +757,73 @@ body.dark-mode::before {
 @keyframes blink {
   50% { opacity: 0; }
 }
+
+
+/* MATCH */
+.matchmaking-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(#1a0000, #050000);
+  border: 4px ridge #550000;
+  padding: 20px;
+  box-shadow:
+    inset 0 0 18px rgba(255, 0, 0, 0.25),
+    0 0 12px rgba(255, 0, 0, 0.3);
+  text-align: center;
+}
+
+.playScreen{
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 12px;
+}
+
+.play-frame{
+    background: linear-gradient(55deg, #3700ff 50%, rgb(255, 0, 0) 50%);
+    top: 100%;
+    left: 100%;
+    height : 100vh;
+    width: 100vw;
+}
+
+.banner{
+    background: linear-gradient(135deg, #ffd700 0%, #9b9030 50%, #ffd700 100%);
+    height : 120px;
+    width: 800px;
+    border : 3px ridge #ffcc00;
+
+    
+    align-content:  center;
+    display: flex;
+
+    font-size: 22px;
+    color: #000;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+} 
+
+.play-area{
+    border: 4px ridge #ffd84d;
+    background: linear-gradient(145deg, #290000, #610000, #1b0000);
+    padding: 24px;
+    min-height: 400px;
+    box-shadow:
+        inset 0 0 22px rgba(255, 216, 77, 0.18),
+        0 0 18px rgba(255, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.banner.enemy{
+    transform: translate(50vw, 20vh);
+} 
+
+.banner.player{
+    transform: translate(20vw, 70vh);
+} 
+
+
