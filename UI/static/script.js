@@ -195,6 +195,8 @@ historyBtn.addEventListener("click", function () {
   historyScreen.classList.remove("hidden");
 
   playMenuMusic();
+
+  renderMatchHistory();
 });
 
 backToMenuBtn.addEventListener("click", function () {
@@ -247,12 +249,41 @@ document.addEventListener("keydown", function (event) {
 });
 
 function randomMarketPrice() {
-  return Math.floor(Math.random() * 2001) + 1000;
+  return Math.floor(Math.random() * 2001) + 100;
 }
 
-function updateBlackMarketPrices() {
-  replayPrice.textContent = "$" + randomMarketPrice();
-  overwritePrice.textContent = "$" + randomMarketPrice();
+document.getElementById("buyReplayBtn").addEventListener("click", function () {purchasePowerup("replay")});
+document.getElementById("buyOverwriteBtn").addEventListener("click", function () {purchasePowerup("overwrite")});
+
+async function purchasePowerup(powerupType) {
+  const response = await fetch(`/api/playerInfo`, {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' },
+  });
+  purchasePrice = powerupType === "replay" ? parseInt(replayPrice.textContent.replace("$", "")) : parseInt(overwritePrice.textContent.replace("$", ""));
+  const data = await response.json();
+
+  if (data.money >= purchasePrice) {
+    const newPowerups = data.powerups + 1;
+    const newMoney = data.money - purchasePrice;
+
+    const purchaseResponse = await fetch('/api/buyPowerup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ powerupType, newPowerups, newMoney })
+    });
+    loadProfile();
+  } else {
+    alert("Not enough money to purchase this power-up!");
+  }
+}
+
+async function updateBlackMarketPrices() {
+  while (blackMarketScreen.classList.contains("hidden") === false) {
+    replayPrice.textContent = "$" + randomMarketPrice();
+    overwritePrice.textContent = "$" + randomMarketPrice();
+    await sleep(500);
+  }
 }
 
 blackMarketBtn.addEventListener("click", function () {
@@ -290,11 +321,24 @@ document.addEventListener("click", (e) => {
   clickSound.play().catch(() => {});
 });
 
-function renderMatchHistory(matches) {
+async function renderMatchHistory() {
   const tableBody = document.getElementById("historyTableBody");
   const emptyMsg = document.getElementById("emptyHistoryMsg");
 
   tableBody.innerHTML = "";
+
+  const response = await fetch('/api/matchHistory', {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' },
+  });
+
+  console.log("Fetching match history...");
+  
+  const data = await response.json();
+
+  matches = data.matches;
+
+  console.log("Match history data:", data.matches);
 
   if (!matches || matches.length === 0) {
     emptyMsg.style.display = "block";
@@ -303,23 +347,76 @@ function renderMatchHistory(matches) {
 
   emptyMsg.style.display = "none";
 
+  totalWins=0;
+  totalLosses=0;
+  totalDraws=0;
+
   matches.forEach((match, index) => {
+    console.log("Processing match:", match);
     const row = document.createElement("tr");
+
+    if (match.p1id === data.userId) {
+      switch (match.victor) {
+        case 1:
+          match.victor = "win";
+          totalWins++;
+          break;
+        case 2:
+          match.victor = "loss";
+          totalLosses++;
+          break;
+        default:
+          match.victor = "draw";
+          totalDraws++;
+      }
+      match.money = match.p1money;
+    } else {
+      switch (match.victor) {
+        case 1:
+          match.victor = "loss";
+          totalLosses++;
+          break;
+        case 2:
+          match.victor = "win";
+          totalWins++;
+          break;
+        default:
+          match.victor = "draw";
+          totalDraws++;
+      }
+      match.money = match.p2money;
+    }
+
 
     row.innerHTML = `
       <td>${index + 1}</td>
-      <td class="${match.result === "win" ? "win" : "loss"}">
-        ${match.result.toUpperCase()}
+      <td class="${match.victor === "win" ? "win" : "loss"}">
+        ${match.victor.toUpperCase()}
       </td>
-      <td>${match.player}</td>
-      <td>${match.opponent}</td>
-      <td class="${match.result === "win" ? "win" : "loss"}">
+      <td>${match.playerName}</td>
+      <td>${match.otherName}</td>
+      <td class="${match.victor === "win" ? "win" : "loss"}">
         ${match.money}
       </td>
     `;
 
     tableBody.appendChild(row);
+
+
   });
+
+  const response2 = await fetch(`/api/playerInfo`, {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' },
+  });
+
+  const data2 = await response2.json();
+
+  document.getElementById("totalWins").textContent = totalWins;
+  document.getElementById("totalLosses").textContent = totalLosses;
+  document.getElementById("totalDraws").textContent = totalDraws;
+  money = data2.money - 1000; // Subtract starting money to show net gain/loss
+  document.getElementById("netMoney").textContent = "$" + money;
 }
 
 async function checkLogin() {
@@ -493,6 +590,19 @@ playBtn.addEventListener("click", async function () {
     vDisplay.textContent = "It's a draw!";
   }
 
+  console.log("powerups available:", data3.powerups);
+  if (winner != "win" && data3.powerups > 0) {
+    powerupsLeft = data3.powerups-1;
+    winner = "win";
+    vDisplay.textContent = "Cheated!";
+    const response4 = await fetch('/api/usePowerup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ newPowerups: powerupsLeft })
+    });
+  }
+
+
   moneyChange = determineMoneyChange(winner, data3.money, data.money);
 
   document.getElementById("vMoney").textContent = (moneyChange >= 0 ? "You won $" : "You lost $") + Math.abs(moneyChange) + "!";
@@ -523,7 +633,7 @@ playBtn.addEventListener("click", async function () {
   const postResults = await fetch('/api/postResults', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ result: winner, money: newMoney, opponent: data.user, p1select: moveSelected, p2select: data.selection })
+    body: JSON.stringify({ result: winner, money: newMoney, opponent: data.user, p1select: moveSelected, p2select: data.selection, p2money: data.money })
   });
 
   loadProfile();

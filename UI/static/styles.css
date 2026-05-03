@@ -879,12 +879,12 @@ body.dark-mode::before {
 }
 
 .selection.player{
-    transform: translate(35vw, 30vh);
+    transform: translate(25vw, 30vh);
     background: linear-gradient(135deg, #ff0000 0%, #ee1000 50%, #ca0000 100%);
 }
 
 .selection.enemy{
-    transform: translate(60vw, 30vh);
+    transform: translate(70vw, 30vh);
     background: linear-gradient(135deg, #0400ff 0%, #006eff 50%, #0046c7 100%);
 }
 
