@@ -151,7 +151,7 @@
           Match History goes here!!!
         </span>
       </div>
-    </div>
+  </div>
   </div>
 
   <!-- MATCH HISTORY SCREEN -->
@@ -243,6 +243,13 @@
   </div>
 </div>
 
+<!-- User Banner -->
+<div class="userBanner hidden" id="userBanner">
+  <image src="static/images/pfps/1.png"> </image>
+  <h1> You: </h1>
+  <p> You: </p>
+</div>
+
 <!-- MATCHMAKING POPUP -->
 <div class="matchmaking-popup hidden" id="matchmakingPopup">  
   <div class="popup-content">
@@ -260,18 +267,39 @@
 <!-- PLAY SCREEN -->
 <div class="play-screen hidden" id="playScreen">
   <div class="play-frame">
-    <div class = "banner enemy">
-      <image src="static/images/pfps/1.jpg"> </image>
+    <div class = "banner enemy" id ="enemy-banner">
+      <image src="static/images/pfps/2.jpg"> </image>
       <p> Enemy: </p>
     </div>
-    <div class = "banner player">
-      <image src="static/images/pfps/1.jpg"> </image>
+    <div class = "banner player" id="player-banner">
+      <image src="static/images/pfps/2.jpg"> </image>
       <p> You: </p>
     </div>
-    <div class="play-area">
+    <div class="play-area" id="playArea">
       <button class="play-btn" id="rockBtn">✊</button>
       <button class="play-btn" id="paperBtn">✋</button>
       <button class="play-btn" id="scissorsBtn">✌️</button>
+  </div>
+  <div class = "selection player hidden" id="playerSelection">
+    <p> Your Selection: </p>
+  </div>
+  <div class="selection enemy hidden" id="enemySelection">
+    <p> Enemy Selection: </p>
+  </div>
+</div>
+
+<!-- COUNTDOWN POPUP -->
+<div class="countdown-popup hidden" id="countdownPopup">
+  <div class="popup-content">
+    <h2 id="countdownTimer">3</h2>
+  </div>
+</div>
+
+<!-- VICTORY/DEFEAT POPUP -->
+<div class="victory-popup hidden" id="victoryPopup">
+  <div class="popup-content">
+    <h2 id="vDisplay">3</h2>
+    <p id="vMoney">You won $X!</p>
   </div>
 </div>
 

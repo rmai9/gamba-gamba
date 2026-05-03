@@ -774,9 +774,26 @@ body.dark-mode::before {
   text-align: center;
 }
 
+.countdown-popup {
+  position: fixed;
+  top: 50%;
+  min-width: 240px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(#1a0000, #050000);
+  border: 4px ridge #550000;
+  padding: 1px;
+  font-size: 48px;
+  box-shadow:
+    inset 0 0 18px rgba(255, 0, 0, 0.25),
+    0 0 12px rgba(255, 0, 0, 0.3);
+  text-align: center;
+}
+
 .playScreen{
   min-height: 100vh;
-  align-items: center;
+  display: flex;
+  align-items: flex-end;
   justify-content: center;
   padding: 30px 12px;
 }
@@ -785,45 +802,132 @@ body.dark-mode::before {
     background: linear-gradient(55deg, #3700ff 50%, rgb(255, 0, 0) 50%);
     top: 100%;
     left: 100%;
-    height : 100vh;
+    height: 100vh;
     width: 100vw;
 }
 
 .banner{
-    background: linear-gradient(135deg, #ffd700 0%, #9b9030 50%, #ffd700 100%);
-    height : 120px;
+    /*background: linear-gradient(135deg, #ffd700 0%, #9b9030 50%, #ffd700 100%); */
+    background-image: local;
+    background-size: 800px 120px;
+    height: 120px;
     width: 800px;
-    border : 3px ridge #ffcc00;
-
-    
-    align-content:  center;
+    align-content: center;
     display: flex;
-
+    text-align: center;
+    vertical-align: middle;
+    line-height: 60px;
+    gap : 12px;
     font-size: 22px;
     color: #000;
     font-family: Verdana, Arial, Helvetica, sans-serif;
-} 
+}
 
 .play-area{
+    width: 100%;
     border: 4px ridge #ffd84d;
     background: linear-gradient(145deg, #290000, #610000, #1b0000);
-    padding: 24px;
-    min-height: 400px;
+    padding: 28px 0px;
+    min-height: 100px;
+    transform: translate(0, 69.7vh);
     box-shadow:
         inset 0 0 22px rgba(255, 216, 77, 0.18),
         0 0 18px rgba(255, 0, 0, 0.2);
     display: flex;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
-    flex-direction: column;
+    gap: 18px;
+}
+
+.play-area button{
+    min-width: 360px;
+    padding: 16px 24px;
+    font-size: 18px;
+    font-weight: bold;
+    border: 4px outset #ffe58b;
+    background: linear-gradient(#fff5b8, #ffcc00 45%, #bb6100);
+    color: #210000;
+    cursor: pointer;
+    text-transform: uppercase;
+    box-shadow: 0 0 12px rgba(255, 216, 77, 0.25);
+    margin: 10px 12px;
 }
 
 .banner.enemy{
     transform: translate(50vw, 20vh);
-} 
+}
 
 .banner.player{
-    transform: translate(20vw, 70vh);
+    transform: translate(20vw, 60vh);
 } 
+
+.selection{
+    position: absolute;
+    height: 120px;
+    width: 120px;
+    border: 3px ridge #ffcc00;
+    align-content: center;
+    display: flex;
+    text-align: center;
+    vertical-align: middle;
+    align-items: center;
+    justify-content: center;
+    font-size: 65px;
+    color: #000;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+
+.selection.player{
+    transform: translate(35vw, 30vh);
+    background: linear-gradient(135deg, #ff0000 0%, #ee1000 50%, #ca0000 100%);
+}
+
+.selection.enemy{
+    transform: translate(60vw, 30vh);
+    background: linear-gradient(135deg, #0400ff 0%, #006eff 50%, #0046c7 100%);
+}
+
+.victory-popup{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(#1a0000, #050000);
+    border: 4px ridge #550000;
+    padding: 20px;
+    box-shadow:
+        inset 0 0 18px rgba(255, 0, 0, 0.25),
+        0 0 12px rgba(255, 0, 0, 0.3);
+    text-align: center;
+    font-size: 32px;
+    color: #ff3333;
+    text-shadow:
+        2px 2px #000,
+        0 0 10px #ff0000,
+        0 0 22px #550000;
+}
+
+
+.userBanner{
+    /*background: linear-gradient(135deg, #ffd700 0%, #9b9030 50%, #ffd700 100%); */
+    background-image: local;
+    background-size: 800px 120px;
+    height: 120px;
+    width: 800px;
+    align-content: center;
+    position: fixed;
+    top : 5%;
+    left : 5%;
+
+    display: flex;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 60px;
+    gap : 12px;
+    font-size: 22px;
+    color: #000;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+}
 
 

@@ -9,6 +9,8 @@ const historyScreen = document.getElementById("historyScreen");
 const backToMenuBtn = document.getElementById("backToMenuBtn");
 const mainMenuMarquee = document.getElementById("mainMenuMarquee");
 
+const userBanner = document.getElementById("userBanner");
+
 const blackMarketScreen = document.getElementById("blackMarketScreen");
 const blackMarketBackBtn = document.getElementById("blackMarketBackBtn");
 const replayPrice = document.getElementById("replayPrice");
@@ -30,8 +32,16 @@ const clickSound = document.getElementById("clickSound");
 const playBtn = document.getElementById("playBtn");
 const matchmakingPopup = document.getElementById("matchmakingPopup");
 const matchmakingPopup2 = document.getElementById("matchmakingPopup2");
+const victoryPopup = document.getElementById("victoryPopup");
 
 const playScreen = document.getElementById("playScreen");
+const playArea = document.getElementById("playArea");
+const rockBtn = document.getElementById("rockBtn");
+const paperBtn = document.getElementById("paperBtn");
+const scissorsBtn = document.getElementById("scissorsBtn");
+const countdownPopup = document.getElementById("countdownPopup");
+const playerSelection = document.getElementById("playerSelection");
+const enemySelection = document.getElementById("enemySelection");
 
 clickSound.volume = 0.3;
 bgMusic.volume = 0.04;
@@ -318,6 +328,9 @@ async function checkLogin() {
     if (response.ok) {
       loginScreen.classList.add("hidden");
       mainMenu.classList.remove("hidden");
+      userBanner.classList.remove("hidden");
+      loadProfile();
+      playMenuMusic();
     }
   } catch (error) {
     // not logged in
@@ -339,10 +352,13 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 
 playBtn.addEventListener("click", async function () {
-  bgMusic.pause();
+  if (musicStarted) {
+    bgMusic.pause();
+  }
 
   matchmakingPopup.classList.remove("hidden");
   mainMenu.classList.add("hidden");
+  userBanner.classList.add("hidden");
 
   randval = Math.random() * 500 + 100; // 2-4 seconds
 
@@ -353,6 +369,20 @@ playBtn.addEventListener("click", async function () {
 
   const data = await response.json();
   
+  const response2  = await fetch('/api/me', {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+  });
+
+  const data2 = await response2.json();
+
+  const response3 = await fetch(`/api/playerInfo`, {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' },
+  });
+
+  const data3 = await response3.json();
+
 
   await sleep(randval);
 
@@ -366,8 +396,193 @@ playBtn.addEventListener("click", async function () {
 
   matchmakingPopup2.classList.add("hidden");
   playScreen.classList.remove("hidden");
-
-  document.querySelector(".enemy-banner p").textContent = data.username;
   
 
+  console.log("Matched with:", data.username);
+  console.log("Your username:", data2.user.username);
+
+  enemyBanner = document.getElementById("enemy-banner");
+  playerBanner = document.getElementById("player-banner");
+
+  enemyBanner.querySelector("p").textContent = data.username;
+  playerBanner.querySelector("p").textContent = data2.user.username;
+  enemyBanner.querySelector("img").src = getProfilePicture(data.pfp);
+  playerBanner.querySelector("img").src = getProfilePicture(data3.pfp);
+  enemyBanner.style.backgroundImage = "url('" + getProfileBanner(data.banner) + "')";
+  playerBanner.style.backgroundImage = "url('" + getProfileBanner(data3.banner) + "')";
+
+
+  moveSelected = null;
+
+  rockBtn.disabled = false;
+  paperBtn.disabled = false;
+  scissorsBtn.disabled = false;
+
+  rockBtn.addEventListener("click", function() {
+    moveSelected = 1;
+  });
+  paperBtn.addEventListener("click", function() {
+    moveSelected = 2;
+  });
+  scissorsBtn.addEventListener("click", function() {
+    moveSelected = 3;
+  });
+
+  while (!moveSelected) {
+    await sleep(100);
+  }
+
+  rockBtn.disabled = true;
+  paperBtn.disabled = true;
+  scissorsBtn.disabled = true;
+  playArea.classList.add("hidden");
+
+  countdownPopup.classList.remove("hidden");
+  const timer = document.getElementById("countdownTimer");
+  let count = 3;
+  timer.textContent = count;
+
+  const countdownInterval = setInterval(() => {
+    count--;
+    timer.textContent = count;
+    if (count <= 0) {
+      clearInterval(countdownInterval);
+      countdownPopup.classList.add("hidden");
+    }
+  }, 500);
+
+  await sleep(1500);
+
+  playerSelection.classList.remove("hidden");
+  enemySelection.classList.remove("hidden");
+
+  switch (moveSelected) {
+    case 1:
+      playerSelection.querySelector("p").textContent = "✊";
+      break;
+    case 2:
+      playerSelection.querySelector("p").textContent = "✋";
+      break;
+    case 3:
+      playerSelection.querySelector("p").textContent = "✌️";
+      break;
+  }
+
+  switch (data.selection) {
+    case 1:
+      enemySelection.querySelector("p").textContent = "✊";
+      break;
+    case 2:
+      enemySelection.querySelector("p").textContent = "✋";
+      break;
+    case 3:
+      enemySelection.querySelector("p").textContent = "✌️";
+      break;
+  }
+
+  winner = determineWinner(moveSelected, data.selection);
+
+  victoryPopup.classList.remove("hidden");
+  const vDisplay = document.getElementById("vDisplay");
+
+  if (winner === "win") {
+    vDisplay.textContent = "You win!";
+  } else if (winner === "loss") {
+    vDisplay.textContent = "You lose!";
+  } else {
+    vDisplay.textContent = "It's a draw!";
+  }
+
+  moneyChange = determineMoneyChange(winner, data3.money, data.money);
+
+  document.getElementById("vMoney").textContent = (moneyChange >= 0 ? "You won $" : "You lost $") + Math.abs(moneyChange) + "!";
+
+
+  console.log("Move selected:", moveSelected);
+
+  await sleep(3000);
+  
+  victoryPopup.classList.add("hidden");
+  playScreen.classList.add("hidden");
+  playArea.classList.remove("hidden");
+  mainMenu.classList.remove("hidden");
+  playerSelection.classList.add("hidden");
+  enemySelection.classList.add("hidden");
+  userBanner.classList.remove("hidden");
+
+  if (winner === "win") {
+    winner = 1;
+  } else if (winner === "loss") {
+    winner = 2;
+  } else {
+    winner = 3;
+  }
+
+  newMoney = data3.money + moneyChange;
+
+  const postResults = await fetch('/api/postResults', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ result: winner, money: newMoney, opponent: data.user, p1select: moveSelected, p2select: data.selection })
+  });
+
+  loadProfile();
+  
+  playMenuMusic();
+
 });
+
+function determineMoneyChange(result, currentMoney, enemyMoney = 0) {
+  if (result == "win") {
+    money = 20;
+  } else if (result == "loss") {
+    money = -20;
+  } else {
+    money = 0;
+  }
+  return money;
+
+}
+
+function determineWinner(playerMove, enemyMove) {
+  if (playerMove === enemyMove) {
+    return "draw";
+  } else if (
+    (playerMove === 1 && enemyMove === 3) ||
+    (playerMove === 2 && enemyMove === 1) ||
+    (playerMove === 3 && enemyMove === 2)
+  ) {
+    return "win";
+  } else {
+    return "loss";
+  }
+}
+
+function getProfilePicture(pfp) {
+    if (!pfp) {
+        return "static/images/pfps/1.png";
+    } else {
+        return "static/images/pfps/" + pfp + ".png";
+    }
+}
+function getProfileBanner(banner) {
+    if (!banner) {
+        return "static/banners/1.png";
+    } else {
+        return "static/banners/" + banner + ".png";
+    }
+}
+
+async function loadProfile(){ 
+  const response = await fetch(`/api/playerInfo`, {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' },
+  });
+
+  const data = await response.json();
+  userBanner.querySelector("h1").textContent = data.username;
+  userBanner.querySelector("img").src = getProfilePicture(data.pfp);
+  userBanner.style.backgroundImage = "url('" + getProfileBanner(data.banner) + "')";
+  userBanner.querySelector("p").textContent = data.money + " dollars";
+  
+}
