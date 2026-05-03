@@ -114,3 +114,16 @@ def use_powerup():
     except Exception as e:
         print(e, file=sys.stderr)
         return jsonify({'error': 'Failed to use powerup'}), 500
+    
+@flask_bp.route('/api/updateProfile', methods=['POST'])
+def update_profile():
+    """Update profile picture and banner for the current user."""
+    data = request.get_json()
+    db = get_db()
+    try:
+        db.execute('UPDATE player SET profile_picture = ?, profile_banner = ?, money = ? WHERE user_id = ?', (data['pfp'], data['banner'], data['money'], session['user_id']))
+        db.commit()
+        return jsonify({'message': 'Profile updated successfully'}), 200
+    except Exception as e:
+        print(e, file=sys.stderr)
+        return jsonify({'error': 'Failed to update profile'}), 500

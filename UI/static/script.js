@@ -8,6 +8,7 @@ const historyBtn = document.getElementById("historyBtn");
 const historyScreen = document.getElementById("historyScreen");
 const backToMenuBtn = document.getElementById("backToMenuBtn");
 const mainMenuMarquee = document.getElementById("mainMenuMarquee");
+const storeBtn = document.getElementById("storeBtn");
 
 const userBanner = document.getElementById("userBanner");
 
@@ -28,6 +29,12 @@ const signupPasswordToggle = document.getElementById("signupPasswordToggle");
 const bgMusic = document.getElementById("bgMusic");
 const blackMarketMusic = document.getElementById("blackMarketMusic");
 const clickSound = document.getElementById("clickSound");
+
+const store = document.getElementById("store");
+const storeBackground = document.getElementById("storeBackground");
+const backToMenuBtn2 = document.getElementById("backToMenuBtn2");
+const pfpTable = document.getElementById("pfpTable");
+const bannerTable = document.getElementById("bannerTable");
 
 const playBtn = document.getElementById("playBtn");
 const matchmakingPopup = document.getElementById("matchmakingPopup");
@@ -50,11 +57,15 @@ blackMarketMusic.volume = 0.04;
 const blackMarketSound = new Audio("static/audio/blackmarket.mp3");
 blackMarketSound.volume = 0.35;
 
+const storeMusic = new Audio("static/audio/storemusic.mp3");
+storeMusic.volume = 0.05;
+
 let musicStarted = false;
 let currentMusic = bgMusic;
 
 function startMusic() {
   if (musicStarted) return;
+  musicStarted = true;
 
   bgMusic.play().then(function () {
     musicStarted = true;
@@ -68,12 +79,25 @@ function playMenuMusic() {
   if (!musicStarted) return;
 
   blackMarketMusic.pause();
+  storeMusic.pause();
 
   if (bgMusic.paused) {
     bgMusic.play().catch(() => {});
   }
 
   currentMusic = bgMusic;
+}
+
+function playStoreMusic() {
+  if (!musicStarted) return;
+
+  bgMusic.pause();
+
+  if (storeMusic.paused) {
+    storeMusic.play().catch(() => {});
+  }
+
+  currentMusic = storeMusic;
 }
 
 function playBlackMarketMusic() {
@@ -199,6 +223,69 @@ historyBtn.addEventListener("click", function () {
   renderMatchHistory();
 });
 
+storeBtn.addEventListener("click", function () {
+  startMusic();
+  
+  mainMenu.classList.add("hidden");
+  store.classList.remove("hidden");
+  storeBackground.classList.remove("hidden");
+
+  storeOptions();
+  
+  playStoreMusic();
+});
+
+const pfpAmount = 10;
+const bannerAmount = 10;
+
+function storeOptions() {
+  const row = document.createElement("tr");
+  for (let i = 1; i <= pfpAmount; i++) {
+    price = Math.floor(randomMarketPrice()/10)
+    row.innerHTML += `
+      <td>
+        <button class="pfp-btn" data-pfp="${i}" onclick="purchasePfp("${i}")>
+          <img src="static/images/pfps/${i}.png" alt="PFP ${i}">
+          <p class="pfp-price">${price}$</p>
+        </button>
+      </td>
+    `;
+
+    pfpTable.appendChild(row);
+  }
+  storeScrollEffect();
+  // Placeholder for any future store options functionality
+}
+
+function purchasePfp(num){
+
+}
+
+async function storeScrollEffect() {
+  baseOffset = (120+25)*pfpAmount;
+  pfpTable.style.transform = "translateX(pfpA)";
+  while (store.classList.contains("hidden") === false) {
+    const offset = parseInt(getComputedStyle(pfpTable).transform.split(",")[4]) || 0;
+    if (offset <= -baseOffset) {
+      pfpTable.style.transform = `translateX(${baseOffset}px)`;
+    } else {
+      pfpTable.style.transform = `translateX(${offset - 5}px)`;
+    }
+    await sleep(10);
+  }
+}
+
+
+backToMenuBtn2.addEventListener("click", function () {
+  startMusic();
+
+  store.classList.add("hidden");
+  storeBackground.classList.add("hidden");
+  mainMenu.classList.remove("hidden");
+
+  playMenuMusic();
+});
+
 backToMenuBtn.addEventListener("click", function () {
   startMusic();
 
@@ -237,6 +324,7 @@ logoutBtn.addEventListener("click", async function () {
 });
 
 let bPresses = 0;
+
 
 document.addEventListener("keydown", function (event) {
   if (event.key.toLowerCase() === "b") {
@@ -320,6 +408,8 @@ document.addEventListener("click", (e) => {
   clickSound.currentTime = 0;
   clickSound.play().catch(() => {});
 });
+
+
 
 async function renderMatchHistory() {
   const tableBody = document.getElementById("historyTableBody");
@@ -427,7 +517,6 @@ async function checkLogin() {
       mainMenu.classList.remove("hidden");
       userBanner.classList.remove("hidden");
       loadProfile();
-      playMenuMusic();
     }
   } catch (error) {
     // not logged in

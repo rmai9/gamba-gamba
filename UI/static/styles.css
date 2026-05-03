@@ -604,6 +604,90 @@ input[type="password"] {
   filter: brightness(1.2);
 }
 
+/* STORE SCREEN */
+.store {
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 12px;
+}
+
+.store:not(.hidden) {
+  display: flex;
+}
+
+.storeBackground {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background: radial-gradient(circle at top, #008000 0%, #00a035 50%, #00a508 100%);
+  z-index: -1;
+}
+
+.store-frame {
+  width: 1020px;
+  max-width: 100%;
+  border: 6px ridge #caad04;
+  background:
+    linear-gradient(rgba(0, 82, 32, 0.92), rgba(20,0,0,0.96)),
+    repeating-linear-gradient(90deg, transparent 0 18px, rgba(255,255,255,0.04) 18px 19px);
+  box-shadow:
+    0 0 18px #019c479a,
+    0 0 42px rgba(255, 217, 0, 0.45),
+    inset 0 0 35px rgba(0, 94, 12, 0.35);
+  text-align: center;
+  padding-bottom: 30px;
+}
+
+.blocker{
+  background: #000 ;
+  border: 6px ridge #caad04;
+  width: 1020px;
+  height: 170px;
+  position: absolute;
+  z-index: 15;
+}
+
+.blocker.left{
+  transform: translate(99.5%, 0);
+}
+.blocker.right{
+  transform: translate(-99.5%, 0);
+}
+
+.pfp-buttons {
+  display: flex;
+  gap: 100px;
+  row-gap: 25px;
+  justify-content: center;
+  align-content: center;
+  flex-direction: row;
+  margin-top: 2px;
+  margin-bottom: 50px;
+}
+
+.pfp-btn {
+  border: 3px ridge #550000;
+  background: linear-gradient(#1a0000, #050000);
+  padding: 12px;
+  width: 120px;
+  margin-left: 25px;
+  height: 120px;
+  box-shadow:
+    inset 0 0 18px rgba(255, 0, 0, 0.25),
+    0 0 12px rgba(255, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+    font-family: Georgia, 'Times New Roman', serif;
+  font-size: 24px;
+  color: #00ff37;
+  text-shadow:
+    2px 2px #000,
+    0 0 10px #00ff80,
+    0 0 22px #007e34;
+}
+
 /* BLACK MARKET SCREEN */
 
 .black-market-screen {
