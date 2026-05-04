@@ -156,8 +156,6 @@
 </div>
 
   <!-- STORE SCREEN -->
-
-
   <div class="store hidden" id="store">
     <div class="store-frame">
       <div class="top-bar">
@@ -172,29 +170,37 @@
 
       <p class="menu-subtitle">Don't be caught looking broke!</p>
 
-      <div class="pfp-buttons">
-        <div class="blocker left"></div>
-        <div class="blocker right"></div>
-          <table class="pfp-table" id="pfpTable">
-            <tr>
-            </tr>
-          </table>
+      <!-- STORE TABS -->
+      <div class="store-tabs">
+        <button class="store-tab active" id="tabShop" type="button">SHOP</button>
+        <button class="store-tab" id="tabOwned" type="button">YOUR COLLECTION</button>
       </div>
-      <div class="pfp-buttons">
-        <table class="banner-table" id ="bannerTable">
-          <tr>
-          </tr>
-        </table>
+
+      <!-- SHOP PANEL -->
+      <div class="store-panel" id="panelShop">
+        <div class="store-section-label">★ PROFILE PICTURES ★</div>
+        <div class="store-scroll-wrap">
+          <div class="store-items-row" id="pfpShopRow"></div>
+        </div>
+        <div class="store-section-label">★ BANNERS ★</div>
+        <div class="store-items-row centered" id="bannerShopRow"></div>
       </div>
-      <div class="pfp-buttons"></div>
-      <button class="menu-btn back-btn" id="backToMenuBtn2" type="button">      
+
+      <!-- OWNED PANEL -->
+      <div class="store-panel hidden" id="panelOwned">
+        <div class="store-section-label">★ YOUR PROFILE PICTURES ★</div>
+        <div class="store-items-row centered" id="pfpOwnedRow"></div>
+        <div class="store-section-label">★ YOUR BANNERS ★</div>
+        <div class="store-items-row centered" id="bannerOwnedRow"></div>
+      </div>
+
+      <button class="menu-btn back-btn" id="backToMenuBtn2" type="button">
         BACK TO MAIN MENU
       </button>
+    </div>
   </div>
-</div>
 
-
-<div class="storeBackground hidden" id="storeBackground"></div>
+  <div class="storeBackground hidden" id="storeBackground"></div>
 
 
   <!-- MATCH HISTORY SCREEN -->
@@ -295,9 +301,27 @@
 
 <!-- User Banner -->
 <div class="userBanner hidden" id="userBanner">
-  <image src="static/images/pfps/1.png"> </image>
-  <h1> You: </h1>
-  <p> You: </p>
+  <img src="static/images/pfps/1.png" alt="Your PFP">
+  <h1>You</h1>
+  <p>0 dollars</p>
+</div>
+
+<!-- BET POPUP -->
+<div class="matchmaking-popup hidden" id="betPopup">
+  <div class="popup-content bet-popup-content">
+    <h2>PLACE YOUR BET</h2>
+    <p class="bet-balance">Wallet: <span id="betWalletDisplay">$0</span></p>
+    <div class="bet-input-row">
+      <button class="bet-quick-btn" id="betMin">$10</button>
+      <button class="bet-quick-btn" id="betHalf">HALF</button>
+      <button class="bet-quick-btn" id="betAll">ALL IN</button>
+    </div>
+    <div class="bet-input-wrap">
+      <span class="bet-dollar">$</span>
+      <input type="number" id="betInput" min="1" placeholder="0" />
+    </div>
+    <button class="menu-btn" id="betConfirmBtn" type="button">CONFIRM BET</button>
+  </div>
 </div>
 
 <!-- MATCHMAKING POPUP -->
@@ -317,24 +341,31 @@
 <!-- PLAY SCREEN -->
 <div class="play-screen hidden" id="playScreen">
   <div class="play-frame">
-    <div class = "banner enemy" id ="enemy-banner">
-      <image src="static/images/pfps/2.jpg"> </image>
-      <p> Enemy: </p>
+    <div class="top-bar">★ RPS ROYALE ONLINE ★ DUEL ARENA ★ PLACE YOUR MOVE ★</div>
+    <div class="banner enemy" id="enemy-banner">
+      <img src="static/images/pfps/2.png" alt="Enemy PFP">
+      <p>Enemy</p>
     </div>
-    <div class = "banner player" id="player-banner">
-      <image src="static/images/pfps/2.jpg"> </image>
-      <p> You: </p>
+    <div class="banner player" id="player-banner">
+      <img src="static/images/pfps/1.png" alt="Player PFP">
+      <p>You</p>
     </div>
+    <div class="arena-middle">
+      <div class="selection-slot">
+        <div class="selection player hidden" id="playerSelection"><p></p></div>
+        <div class="selection-label" id="playerSelLabel"></div>
+      </div>
+      <div class="selection-slot">
+        <div class="selection enemy hidden" id="enemySelection"><p></p></div>
+        <div class="selection-label" id="enemySelLabel"></div>
+      </div>
+    </div>
+    <div class="bet-display" id="betAmountDisplay">BET: $0</div>
     <div class="play-area" id="playArea">
       <button class="play-btn" id="rockBtn">✊</button>
       <button class="play-btn" id="paperBtn">✋</button>
       <button class="play-btn" id="scissorsBtn">✌️</button>
-  </div>
-  <div class = "selection player hidden" id="playerSelection">
-    <p> Your Selection: </p>
-  </div>
-  <div class="selection enemy hidden" id="enemySelection">
-    <p> Enemy Selection: </p>
+    </div>
   </div>
 </div>
 
@@ -347,12 +378,16 @@
 
 <!-- VICTORY/DEFEAT POPUP -->
 <div class="victory-popup hidden" id="victoryPopup">
-  <div class="popup-content">
-    <h2 id="vDisplay">3</h2>
-    <p id="vMoney">You won $X!</p>
-  </div>
+  <h2 id="vDisplay"></h2>
+  <p id="vMoney"></p>
 </div>
 
+
+<!-- TOAST NOTIFICATION -->
+<div class="toast hidden" id="toast">
+  <span class="toast-icon" id="toastIcon">✓</span>
+  <span id="toastMsg">Message here</span>
+</div>
 
 <audio id="bgMusic" loop>
   <source src="static/audio/menus.mp3" type="audio/mpeg">
