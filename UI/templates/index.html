@@ -72,7 +72,6 @@
             <div class="links">
               <button class="info-btn" type="button">FORGOT PASSWORD</button>
               <button class="info-btn" type="button" id="createAccountBtn">CREATE ACCOUNT</button>
-              <button class="info-btn" type="button">HELP DESK</button>
             </div>
           </form>
 
@@ -135,8 +134,9 @@
       <p class="menu-subtitle">Welcome back, high roller.</p>
 
       <div class="menu-buttons">
-        <button class="menu-btn play-btn" type="button">PLAY</button>
+        <button class="menu-btn play-btn" type="button" id="playBtn">PLAY</button>
         <button class="menu-btn" id="historyBtn" type="button">MATCH HISTORY</button>
+        <button class="menu-btn" id="storeBtn" type="button">SWAG</button>
         <button class="menu-btn black-market hidden" id="blackMarketBtn" type="button">
           BLACK MARKET
         </button>
@@ -146,8 +146,61 @@
       </div>
 
       <p class="secret-hint">Press B three times to reveal hidden access...</p>
+      <div class="marquee" id="mainMenuMarquee"> 
+        <span>
+          Match History goes here!!!
+        </span>
+      </div>
+  </div>
+</div>
+
+  <!-- STORE SCREEN -->
+  <div class="store hidden" id="store">
+    <div class="store-frame">
+      <div class="top-bar">
+        ★ SWAG ★ BALL OUT IN STYLE ★ RPS ROYALE MERCH ★
+      </div>
+
+      <h1 class="title-glow">
+        <span class="dollar">$</span>
+        STORE
+        <span class="dollar">$</span>
+      </h1>
+
+      <p class="menu-subtitle">Don't be caught looking broke!</p>
+
+      <!-- STORE TABS -->
+      <div class="store-tabs">
+        <button class="store-tab active" id="tabShop" type="button">SHOP</button>
+        <button class="store-tab" id="tabOwned" type="button">YOUR COLLECTION</button>
+      </div>
+
+      <!-- SHOP PANEL -->
+      <div class="store-panel" id="panelShop">
+        <div class="store-section-label">★ PROFILE PICTURES ★</div>
+        <div class="store-scroll-wrap">
+          <div class="store-items-row" id="pfpShopRow"></div>
+        </div>
+        <div class="store-section-label">★ BANNERS ★</div>
+        <div class="store-items-row centered" id="bannerShopRow"></div>
+      </div>
+
+      <!-- OWNED PANEL -->
+      <div class="store-panel hidden" id="panelOwned">
+        <div class="store-section-label">★ YOUR PROFILE PICTURES ★</div>
+        <div class="store-items-row centered" id="pfpOwnedRow"></div>
+        <div class="store-section-label">★ YOUR BANNERS ★</div>
+        <div class="store-items-row centered" id="bannerOwnedRow"></div>
+      </div>
+
+      <button class="menu-btn back-btn" id="backToMenuBtn2" type="button">
+        BACK TO MAIN MENU
+      </button>
     </div>
   </div>
+
+  <div class="storeBackground hidden" id="storeBackground"></div>
+
 
   <!-- MATCH HISTORY SCREEN -->
 <div class="history-screen hidden" id="historyScreen">
@@ -169,6 +222,12 @@
         <span>Losses</span>
         <strong id="totalLosses">--</strong>
       </div>
+
+      <div class="stat-box">
+        <span>Draws</span>
+        <strong id="totalDraws">--</strong>
+      </div>
+
 
       <div class="stat-box">
         <span>Net Money</span>
@@ -219,14 +278,14 @@
         <h2>Replay</h2>
         <p>Swap your chosen play to a winning one.</p>
         <div class="market-price" id="replayPrice">$----</div>
-        <button class="market-buy-btn" type="button">BUY REPLAY</button>
+        <button class="market-buy-btn" type="button" id="buyReplayBtn">BUY REPLAY</button>
       </div>
 
       <div class="market-card">
         <h2>Overwrite</h2>
         <p>Swap the enemy's choice to a losing one.</p>
         <div class="market-price" id="overwritePrice">$----</div>
-        <button class="market-buy-btn" type="button">BUY OVERWRITE</button>
+        <button class="market-buy-btn" type="button" id="buyOverwriteBtn">BUY OVERWRITE</button>
       </div>
     </div>
 
@@ -236,6 +295,97 @@
     <img src="static/images/morshu.gif" class="black-market-guy" alt="black market vendor">
 
   </div>
+</div>
+
+
+<!-- User Banner -->
+<div class="userBanner hidden" id="userBanner">
+  <img src="static/images/pfps/1.png" alt="Your PFP">
+  <h1>You</h1>
+  <p>0 dollars</p>
+</div>
+
+<!-- BET POPUP -->
+<div class="matchmaking-popup hidden" id="betPopup">
+  <div class="popup-content bet-popup-content">
+    <h2>PLACE YOUR BET</h2>
+    <p class="bet-balance">Wallet: <span id="betWalletDisplay">$0</span></p>
+    <div class="bet-input-row">
+      <button class="bet-quick-btn" id="betMin">$10</button>
+      <button class="bet-quick-btn" id="betHalf">HALF</button>
+      <button class="bet-quick-btn" id="betAll">ALL IN</button>
+    </div>
+    <div class="bet-input-wrap">
+      <span class="bet-dollar">$</span>
+      <input type="number" id="betInput" min="1" placeholder="0" />
+    </div>
+    <button class="menu-btn" id="betConfirmBtn" type="button">CONFIRM BET</button>
+  </div>
+</div>
+
+<!-- MATCHMAKING POPUP -->
+<div class="matchmaking-popup hidden" id="matchmakingPopup">  
+  <div class="popup-content">
+    <h2>Matchmaking</h2>
+    <p>Waiting for an opponent...</p>
+  </div>
+</div>
+<div class="matchmaking-popup hidden" id="matchmakingPopup2">  
+  <div class="popup-content">
+    <h2>Match Found!</h2>
+    <p id="oppfound"> Opponent found! Get ready to play.</p>
+  </div>
+</div>
+
+<!-- PLAY SCREEN -->
+<div class="play-screen hidden" id="playScreen">
+  <div class="play-frame">
+    <div class="top-bar">★ RPS ROYALE ONLINE ★ DUEL ARENA ★ PLACE YOUR MOVE ★</div>
+    <div class="banner enemy" id="enemy-banner">
+      <img src="static/images/pfps/2.png" alt="Enemy PFP">
+      <p>Enemy</p>
+    </div>
+    <div class="banner player" id="player-banner">
+      <img src="static/images/pfps/1.png" alt="Player PFP">
+      <p>You</p>
+    </div>
+    <div class="arena-middle">
+      <div class="selection-slot">
+        <div class="selection player hidden" id="playerSelection"><p></p></div>
+        <div class="selection-label" id="playerSelLabel"></div>
+      </div>
+      <div class="selection-slot">
+        <div class="selection enemy hidden" id="enemySelection"><p></p></div>
+        <div class="selection-label" id="enemySelLabel"></div>
+      </div>
+    </div>
+    <div class="bet-display" id="betAmountDisplay">BET: $0</div>
+    <div class="play-area" id="playArea">
+      <button class="play-btn" id="rockBtn">✊</button>
+      <button class="play-btn" id="paperBtn">✋</button>
+      <button class="play-btn" id="scissorsBtn">✌️</button>
+    </div>
+  </div>
+</div>
+
+<!-- COUNTDOWN POPUP -->
+<div class="countdown-popup hidden" id="countdownPopup">
+  <div class="popup-content">
+    <h2 id="countdownTimer">3</h2>
+  </div>
+</div>
+
+<!-- VICTORY/DEFEAT POPUP -->
+<div class="victory-popup hidden" id="victoryPopup">
+  <h2 id="vDisplay"></h2>
+  <p id="vMoney"></p>
+</div>
+
+
+<!-- TOAST NOTIFICATION -->
+<div class="toast hidden" id="toast">
+  <span class="toast-icon" id="toastIcon">✓</span>
+  <span id="toastMsg">Message here</span>
 </div>
 
 <audio id="bgMusic" loop>

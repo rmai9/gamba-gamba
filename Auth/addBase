@@ -1,0 +1,16 @@
+INSERT INTO player (user_id) VALUES (2)
+INSERT INTO player (user_id) VALUES (1)
+
+ALTER TABLE player ADD COLUMN powerups INTEGER DEFAULT 0;
+
+DROP TABLE IF EXISTS matchHistory;
+DELETE FROM matchHistory;
+DELETE FROM matchSelections;
+
+INSERT INTO matchHistory (id, p1id, p2id, victor, p1select, p2select, p1money, p2money) VALUES (1, 1, 2, 1, 1, 3, 1000, 1000);
+INSERT INTO matchHistory (id, p1id, p2id, victor, p1select, p2select, p1money, p2money) VALUES (2, 3, 1, 2, 1, 3, 1000, 1000);
+
+INSERT INTO matchSelections (match_id, user_id, selection) VALUES (1, 1, 1);
+INSERT INTO matchSelections (match_id, user_id, selection) VALUES (1, 2, 3);
+INSERT INTO matchSelections (match_id, user_id, selection) VALUES (2, 3, 1);
+INSERT INTO matchSelections (match_id, user_id, selection) VALUES (2, 1, 3);

@@ -36,6 +36,8 @@ def signup():
     try:
         password_hash = generate_password_hash(password)
         db.execute('INSERT INTO users (username, password_hash) VALUES (?, ?)', (username, password_hash))
+        user = db.execute('SELECT * FROM users WHERE username = ?', (username,)).fetchone()
+        db.execute('INSERT INTO player (user_id) VALUES (?)', (user['id'],))
         db.commit()
         return jsonify({'message': 'User created successfully'}), 201
     except sqlite3.IntegrityError:
@@ -56,6 +58,10 @@ def login():
         session['user_id'] = user['id']
         session['username'] = user['username']
         return jsonify({'message': 'Logged in successfully', 'user': {'id': user['id'], 'username': user['username']}}), 200
+    
+    player = db.execute('SELECT * FROM player WHERE username = ?', (username,)).fetchone()
+    if not player:
+        db.execute('INSERT INTO player (user_id) VALUES (?)', (user['id'],))
     return jsonify({'error': 'Invalid credentials'}), 401
 
 @auth_bp.route('/api/logout', methods=['POST'])
