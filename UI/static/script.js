@@ -112,7 +112,92 @@ function playBlackMarketMusic() {
 
 document.addEventListener("click", startMusic);
 
+// ── Screen transition helper ────────────────────────────────────────────
+const overlay = document.getElementById("transitionOverlay");
+
+async function transitionTo(show, hide = [], duration = 220) {
+  // Fade out
+  overlay.style.transition = `opacity ${duration}ms ease`;
+  overlay.style.opacity = "1";
+  await sleep(duration);
+
+  // Swap screens
+  hide.forEach(el => { if (el) el.classList.add("hidden"); });
+  if (show) show.classList.remove("hidden");
+
+  // Fade in
+  overlay.style.opacity = "0";
+  await sleep(duration);
+}
+
+// ── Result sound effects (Web Audio API — no extra files needed) ────────
+let audioCtx = null;
+
+function getAudioCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+
+function playWinSound() {
+  const ctx = getAudioCtx();
+  const notes = [523, 659, 784, 1047]; // C5 E5 G5 C6 — major chord arpeggio
+  notes.forEach((freq, i) => {
+    const osc  = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = "triangle";
+    osc.frequency.value = freq;
+    const t = ctx.currentTime + i * 0.1;
+    gain.gain.setValueAtTime(0, t);
+    gain.gain.linearRampToValueAtTime(0.18, t + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
+    osc.start(t);
+    osc.stop(t + 0.35);
+  });
+}
+
+function playLossSound() {
+  const ctx = getAudioCtx();
+  const notes = [392, 349, 311, 262]; // G4 F4 Eb4 C4 — descending minor
+  notes.forEach((freq, i) => {
+    const osc  = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = "sawtooth";
+    osc.frequency.value = freq;
+    const t = ctx.currentTime + i * 0.12;
+    gain.gain.setValueAtTime(0, t);
+    gain.gain.linearRampToValueAtTime(0.12, t + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
+    osc.start(t);
+    osc.stop(t + 0.4);
+  });
+}
+
+function playDrawSound() {
+  const ctx = getAudioCtx();
+  // Two notes a semitone apart — unresolved tension
+  [440, 466].forEach((freq, i) => {
+    const osc  = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = "sine";
+    osc.frequency.value = freq;
+    const t = ctx.currentTime + i * 0.08;
+    gain.gain.setValueAtTime(0, t);
+    gain.gain.linearRampToValueAtTime(0.1, t + 0.03);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.6);
+    osc.start(t);
+    osc.stop(t + 0.6);
+  });
+}
+
 let rememberUsernameOnLogout = false;
+
+
 
 // ── Enter key triggers login ────────────────────────────────────────────
 document.getElementById("username").addEventListener("keydown", function (e) {
@@ -150,6 +235,7 @@ loginButton.addEventListener("click", async function () {
       userBanner.classList.remove("hidden");
       loadProfile();
       updateMarquee();
+      await transitionTo(mainMenu, [loginScreen]);
       playMenuMusic();
     } else {
       showLoginMessage(data.error || "Login failed");
@@ -221,24 +307,19 @@ signupButton.addEventListener("click", async function () {
   }
 });
 
-historyBtn.addEventListener("click", function () {
+historyBtn.addEventListener("click", async function () {
   startMusic();
-
-  mainMenu.classList.add("hidden");
-  historyScreen.classList.remove("hidden");
-
+  await transitionTo(historyScreen, [mainMenu]);
   playMenuMusic();
-
   renderMatchHistory();
 });
 
 storeBtn.addEventListener("click", async function () {
   startMusic();
-  mainMenu.classList.add("hidden");
-  store.classList.remove("hidden");
   storeBackground.classList.remove("hidden");
   switchStoreTab("shop");
   await storeOptions();
+  await transitionTo(store, [mainMenu]);
   playStoreMusic();
 });
 
@@ -521,22 +602,15 @@ async function storeScrollEffect() {
 
 
 
-backToMenuBtn2.addEventListener("click", function () {
+backToMenuBtn2.addEventListener("click", async function () {
   startMusic();
-
-  store.classList.add("hidden");
-  storeBackground.classList.add("hidden");
-  mainMenu.classList.remove("hidden");
-
+  await transitionTo(mainMenu, [store, storeBackground]);
   playMenuMusic();
 });
 
-backToMenuBtn.addEventListener("click", function () {
+backToMenuBtn.addEventListener("click", async function () {
   startMusic();
-
-  historyScreen.classList.add("hidden");
-  mainMenu.classList.remove("hidden");
-
+  await transitionTo(mainMenu, [historyScreen]);
   updateMarquee();
   playMenuMusic();
 });
@@ -544,25 +618,14 @@ backToMenuBtn.addEventListener("click", function () {
 logoutBtn.addEventListener("click", async function () {
   try {
     await fetch('/api/logout', { method: 'POST' });
-  } catch (error) {
-    // ignore
-  }
+  } catch (error) { }
 
-  mainMenu.classList.add("hidden");
-  historyScreen.classList.add("hidden");
-  blackMarketScreen.classList.add("hidden");
-  store.classList.add("hidden");
-  storeBackground.classList.add("hidden");
-  playScreen.classList.add("hidden");
-  userBanner.classList.add("hidden");
-  loginScreen.classList.remove("hidden");
+  await transitionTo(loginScreen, [mainMenu, historyScreen, blackMarketScreen, store, storeBackground, playScreen, userBanner]);
 
   document.body.classList.remove("dark-mode");
-
   bPresses = 0;
   blackMarketBtn.classList.add("hidden");
 
-  // Clear login form
   if (!rememberUsernameOnLogout) {
     document.getElementById("username").value = "";
   }
@@ -625,24 +688,17 @@ async function updateBlackMarketPrices() {
   }
 }
 
-blackMarketBtn.addEventListener("click", function () {
+blackMarketBtn.addEventListener("click", async function () {
   startMusic();
-
-  mainMenu.classList.add("hidden");
-  blackMarketScreen.classList.remove("hidden");
-
   document.body.classList.add("dark-mode");
-
+  await transitionTo(blackMarketScreen, [mainMenu]);
   playBlackMarketMusic();
   updateBlackMarketPrices();
 });
 
-blackMarketBackBtn.addEventListener("click", function () {
-  blackMarketScreen.classList.add("hidden");
-  mainMenu.classList.remove("hidden");
-
+blackMarketBackBtn.addEventListener("click", async function () {
   document.body.classList.remove("dark-mode");
-
+  await transitionTo(mainMenu, [blackMarketScreen]);
   playMenuMusic();
 });
 
@@ -973,6 +1029,11 @@ playBtn.addEventListener("click", async function () {
 
   const moneyChange = determineMoneyChange(winner, betAmount);
 
+  // Play result sound
+  if (winner === "win")       playWinSound();
+  else if (winner === "loss") playLossSound();
+  else                        playDrawSound();
+
   // Show victory popup with correct class
   victoryPopup.className = "victory-popup " + (
     winner === "win"  ? "win-popup"  :
@@ -992,7 +1053,6 @@ playBtn.addEventListener("click", async function () {
   victoryPopup.className = "victory-popup hidden";
   playScreen.classList.add("hidden");
   playArea.classList.remove("hidden");
-  mainMenu.classList.remove("hidden");
   playerSelection.classList.add("hidden");
   enemySelection.classList.add("hidden");
   playerSelection.style.boxShadow = "";
@@ -1000,6 +1060,7 @@ playBtn.addEventListener("click", async function () {
   enemySelection.style.boxShadow  = "";
   enemySelection.style.opacity    = "";
   userBanner.classList.remove("hidden");
+  await transitionTo(mainMenu, [playScreen]);
 
   const winnerCode = winner === "win" ? 1 : winner === "loss" ? 2 : 3;
   const newMoney = data3.money + moneyChange;
