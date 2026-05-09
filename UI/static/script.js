@@ -75,38 +75,29 @@ function startMusic() {
 
 function playMenuMusic() {
   if (!musicStarted) return;
-
   blackMarketMusic.pause();
   storeMusic.pause();
-
   if (bgMusic.paused) {
     bgMusic.play().catch(() => {});
   }
-
   currentMusic = bgMusic;
 }
 
 function playStoreMusic() {
   if (!musicStarted) return;
-
   bgMusic.pause();
-
   if (storeMusic.paused) {
     storeMusic.play().catch(() => {});
   }
-
   currentMusic = storeMusic;
 }
 
 function playBlackMarketMusic() {
   if (!musicStarted) return;
-
   bgMusic.pause();
-
   if (blackMarketMusic.paused) {
     blackMarketMusic.play().catch(() => {});
   }
-
   currentMusic = blackMarketMusic;
 }
 
@@ -116,21 +107,16 @@ document.addEventListener("click", startMusic);
 const overlay = document.getElementById("transitionOverlay");
 
 async function transitionTo(show, hide = [], duration = 220) {
-  // Fade out
   overlay.style.transition = `opacity ${duration}ms ease`;
   overlay.style.opacity = "1";
   await sleep(duration);
-
-  // Swap screens
   hide.forEach(el => { if (el) el.classList.add("hidden"); });
   if (show) show.classList.remove("hidden");
-
-  // Fade in
   overlay.style.opacity = "0";
   await sleep(duration);
 }
 
-// ── Result sound effects (Web Audio API — no extra files needed) ────────
+// ── Result sound effects (Web Audio API) ───────────────────────────────
 let audioCtx = null;
 
 function getAudioCtx() {
@@ -140,9 +126,9 @@ function getAudioCtx() {
 
 function playWinSound() {
   const ctx = getAudioCtx();
-  const notes = [523, 659, 784, 1047]; // C5 E5 G5 C6 — major chord arpeggio
+  const notes = [523, 659, 784, 1047];
   notes.forEach((freq, i) => {
-    const osc  = ctx.createOscillator();
+    const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     osc.connect(gain);
     gain.connect(ctx.destination);
@@ -159,9 +145,9 @@ function playWinSound() {
 
 function playLossSound() {
   const ctx = getAudioCtx();
-  const notes = [392, 349, 311, 262]; // G4 F4 Eb4 C4 — descending minor
+  const notes = [392, 349, 311, 262];
   notes.forEach((freq, i) => {
-    const osc  = ctx.createOscillator();
+    const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     osc.connect(gain);
     gain.connect(ctx.destination);
@@ -178,9 +164,8 @@ function playLossSound() {
 
 function playDrawSound() {
   const ctx = getAudioCtx();
-  // Two notes a semitone apart — unresolved tension
   [440, 466].forEach((freq, i) => {
-    const osc  = ctx.createOscillator();
+    const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     osc.connect(gain);
     gain.connect(ctx.destination);
@@ -197,8 +182,6 @@ function playDrawSound() {
 
 let rememberUsernameOnLogout = false;
 
-
-
 // ── Enter key triggers login ────────────────────────────────────────────
 document.getElementById("username").addEventListener("keydown", function (e) {
   if (e.key === "Enter") loginButton.click();
@@ -213,8 +196,8 @@ loginButton.addEventListener("click", async function () {
   const rememberCheckbox = document.getElementById("rememberCheckbox");
 
   if (!username || !password) {
-  showLoginMessage("Please enter username and password");
-  return;
+    showLoginMessage("Please enter username and password");
+    return;
   }
 
   rememberUsernameOnLogout = rememberCheckbox.checked;
@@ -230,18 +213,18 @@ loginButton.addEventListener("click", async function () {
 
     if (response.ok) {
       startMusic();
-      loginScreen.classList.add("hidden");
-      mainMenu.classList.remove("hidden");
       userBanner.classList.remove("hidden");
       loadProfile();
       updateMarquee();
+      bPresses = 0;
+      blackMarketBtn.classList.add("hidden");
       await transitionTo(mainMenu, [loginScreen]);
       playMenuMusic();
     } else {
       showLoginMessage(data.error || "Login failed");
     }
   } catch (error) {
-    showLoginMessage("Network error");
+    showLoginMessage("Invalid Username or Password");
   }
 });
 
@@ -323,8 +306,8 @@ storeBtn.addEventListener("click", async function () {
   playStoreMusic();
 });
 
-const pfpAmount = 10;   // only 10 pfp images exist (1–10)
-const bannerAmount = 5; // only 5 banner image exists
+const pfpAmount = 10;
+const bannerAmount = 5;
 
 // ── Toast notification ──────────────────────────────────────────────────
 let toastTimeout = null;
@@ -340,7 +323,6 @@ function showToast(message, type = "success") {
   if (toastTimeout) clearTimeout(toastTimeout);
   toastTimeout = setTimeout(() => { toast.classList.add("hidden"); }, 2800);
 }
-
 
 // ── Owned items (stored per-user in localStorage) ──────────────────────
 function getOwnedKey(username) {
@@ -401,7 +383,6 @@ async function storeOptions() {
   const equippedBanner = playerData.banner || 1;
   const username       = playerData.username;
 
-  // Ensure currently equipped items are always in owned list
   addOwnedPfp(username, equippedPfp);
   addOwnedBanner(username, equippedBanner);
 
@@ -412,34 +393,29 @@ async function storeOptions() {
   document.getElementById("pfpOwnedRow").innerHTML    = "";
   document.getElementById("bannerOwnedRow").innerHTML = "";
 
-  // Shop: profile pictures
   for (let i = 1; i <= pfpAmount; i++) {
     const price   = Math.floor(randomMarketPrice() / 10);
     const isOwned = owned.pfps.includes(i);
     const shopCard = buildShopCard(
       `static/images/pfps/${i}.png`, `PFP ${i}`, price,
-      isOwned ? "OWNED" : "BUY",
-      isOwned,
+      isOwned ? "OWNED" : "BUY", isOwned,
       () => buyPfp(i, price, username)
     );
     document.getElementById("pfpShopRow").appendChild(shopCard);
   }
 
-  // Shop: banners
   for (let i = 1; i <= bannerAmount; i++) {
     const price   = Math.floor(randomMarketPrice() / 100);
     const isOwned = owned.banners.includes(i);
     const shopCard = buildShopCard(
       `static/banners/${i}.png`, `Banner ${i}`, price,
-      isOwned ? "OWNED" : "BUY",
-      isOwned,
+      isOwned ? "OWNED" : "BUY", isOwned,
       () => buyBanner(i, price, username),
       true
     );
     document.getElementById("bannerShopRow").appendChild(shopCard);
   }
 
-  // Collection: owned pfps
   for (const i of owned.pfps) {
     const isEquipped = (i === equippedPfp);
     const card = buildCollectionCard(
@@ -449,7 +425,6 @@ async function storeOptions() {
     document.getElementById("pfpOwnedRow").appendChild(card);
   }
 
-  // Collection: owned banners
   for (const i of owned.banners) {
     const isEquipped = (i === equippedBanner);
     const card = buildCollectionCard(
@@ -584,26 +559,23 @@ async function equipBanner(num, username) {
 }
 
 async function storeScrollEffect() {
-  console.log("WORKING");
   const pfpShopRow = document.getElementById("pfpShopRow");
   const cardWidth  = 116;
   const baseOffset = cardWidth * pfpAmount;
-  pfpShopRow.style.transform = `translateX(${800}px)`;
   pfpShopRow.style.width = baseOffset + 'px';
+  pfpShopRow.style.transform = `translateX(800px)`;
   await sleep(300);
   while (!store.classList.contains("hidden")) {
     const matrix = getComputedStyle(pfpShopRow).transform;
     const offset = matrix !== "none" ? (parseInt(matrix.split(",")[4]) || 0) : 0;
     if (offset <= -baseOffset) {
-      pfpShopRow.style.transform = `translateX(${800}px)`;
+      pfpShopRow.style.transform = `translateX(800px)`;
     } else {
       pfpShopRow.style.transform = `translateX(${offset - 3.5}px)`;
     }
     await sleep(16);
   }
 }
-
-
 
 backToMenuBtn2.addEventListener("click", async function () {
   startMusic();
@@ -641,11 +613,9 @@ logoutBtn.addEventListener("click", async function () {
 
 let bPresses = 0;
 
-
 document.addEventListener("keydown", function (event) {
   if (event.key.toLowerCase() === "b") {
     bPresses++;
-
     if (bPresses >= 3) {
       blackMarketBtn.classList.remove("hidden");
     }
@@ -656,22 +626,24 @@ function randomMarketPrice() {
   return Math.floor(Math.random() * 2001) + 100;
 }
 
-document.getElementById("buyReplayBtn").addEventListener("click", function () {purchasePowerup("replay")});
-document.getElementById("buyOverwriteBtn").addEventListener("click", function () {purchasePowerup("overwrite")});
+document.getElementById("buyReplayBtn").addEventListener("click", function () { purchasePowerup("replay"); });
+document.getElementById("buyOverwriteBtn").addEventListener("click", function () { purchasePowerup("overwrite"); });
 
 async function purchasePowerup(powerupType) {
   const response = await fetch(`/api/playerInfo`, {
     method: 'GET',
     headers: { 'Content-Type': 'application/json' },
   });
-  purchasePrice = powerupType === "replay" ? parseInt(replayPrice.textContent.replace("$", "")) : parseInt(overwritePrice.textContent.replace("$", ""));
+  const purchasePrice = powerupType === "replay"
+    ? parseInt(replayPrice.textContent.replace("$", ""))
+    : parseInt(overwritePrice.textContent.replace("$", ""));
   const data = await response.json();
 
   if (data.money >= purchasePrice) {
     const newPowerups = data.powerups + 1;
     const newMoney = data.money - purchasePrice;
 
-    const purchaseResponse = await fetch('/api/buyPowerup', {
+    await fetch('/api/buyPowerup', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ powerupType, newPowerups, newMoney })
@@ -719,8 +691,6 @@ document.addEventListener("click", (e) => {
   clickSound.play().catch(() => {});
 });
 
-
-
 async function renderMatchHistory() {
   const tableBody = document.getElementById("historyTableBody");
   const emptyMsg = document.getElementById("emptyHistoryMsg");
@@ -732,13 +702,8 @@ async function renderMatchHistory() {
     headers: { 'Content-Type': 'application/json' },
   });
 
-  console.log("Fetching match history...");
-  
   const data = await response.json();
-
-  matches = data.matches;
-
-  console.log("Match history data:", data.matches);
+  const matches = data.matches;
 
   if (!matches || matches.length === 0) {
     emptyMsg.style.display = "block";
@@ -747,76 +712,47 @@ async function renderMatchHistory() {
 
   emptyMsg.style.display = "none";
 
-  totalWins=0;
-  totalLosses=0;
-  totalDraws=0;
+  let totalWins = 0, totalLosses = 0, totalDraws = 0;
 
   matches.forEach((match, index) => {
-    console.log("Processing match:", match);
     const row = document.createElement("tr");
 
     if (match.p1id === data.userId) {
       switch (match.victor) {
-        case 1:
-          match.victor = "win";
-          totalWins++;
-          break;
-        case 2:
-          match.victor = "loss";
-          totalLosses++;
-          break;
-        default:
-          match.victor = "draw";
-          totalDraws++;
+        case 1: match.victor = "win";  totalWins++;   break;
+        case 2: match.victor = "loss"; totalLosses++; break;
+        default: match.victor = "draw"; totalDraws++;
       }
       match.money = match.p1money;
     } else {
       switch (match.victor) {
-        case 1:
-          match.victor = "loss";
-          totalLosses++;
-          break;
-        case 2:
-          match.victor = "win";
-          totalWins++;
-          break;
-        default:
-          match.victor = "draw";
-          totalDraws++;
+        case 1: match.victor = "loss"; totalLosses++; break;
+        case 2: match.victor = "win";  totalWins++;   break;
+        default: match.victor = "draw"; totalDraws++;
       }
       match.money = match.p2money;
     }
 
-
     row.innerHTML = `
       <td>${index + 1}</td>
-      <td class="${match.victor === "win" ? "win" : "loss"}">
-        ${match.victor.toUpperCase()}
-      </td>
+      <td class="${match.victor === "win" ? "win" : "loss"}">${match.victor.toUpperCase()}</td>
       <td>${match.playerName}</td>
       <td>${match.otherName}</td>
-      <td class="${match.victor === "win" ? "win" : "loss"}">
-        ${match.money}
-      </td>
+      <td class="${match.victor === "win" ? "win" : "loss"}">${match.money}</td>
     `;
-
     tableBody.appendChild(row);
-
-
   });
 
   const response2 = await fetch(`/api/playerInfo`, {
     method: 'GET',
     headers: { 'Content-Type': 'application/json' },
   });
-
   const data2 = await response2.json();
 
   document.getElementById("totalWins").textContent = totalWins;
   document.getElementById("totalLosses").textContent = totalLosses;
   document.getElementById("totalDraws").textContent = totalDraws;
-  money = data2.money - 1000; // Subtract starting money to show net gain/loss
-  document.getElementById("netMoney").textContent = "$" + money;
+  document.getElementById("netMoney").textContent = "$" + (data2.money - 1000);
 }
 
 async function checkLogin() {
@@ -826,6 +762,8 @@ async function checkLogin() {
       loginScreen.classList.add("hidden");
       mainMenu.classList.remove("hidden");
       userBanner.classList.remove("hidden");
+      bPresses = 0;
+      blackMarketBtn.classList.add("hidden");
       loadProfile();
       updateMarquee();
     }
@@ -837,7 +775,6 @@ async function checkLogin() {
 function showLoginMessage(message, type = "error") {
   loginMessage.textContent = message;
   loginMessage.classList.remove("hidden", "success");
-
   if (type === "success") {
     loginMessage.classList.add("success");
   }
@@ -847,14 +784,11 @@ window.addEventListener("load", checkLogin);
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-
 playBtn.addEventListener("click", async function () {
-  // First fetch wallet so we can cap the bet
   const infoRes = await fetch('/api/playerInfo', { headers: { 'Content-Type': 'application/json' } });
   const infoData = await infoRes.json();
   const walletAmount = infoData.money || 0;
 
-  // Show bet popup
   document.getElementById("betWalletDisplay").textContent = "$" + walletAmount;
   const betInput = document.getElementById("betInput");
   betInput.value = "";
@@ -875,7 +809,6 @@ playBtn.addEventListener("click", async function () {
   mainMenu.classList.add("hidden");
   userBanner.classList.add("hidden");
 
-  // Wait for confirm
   let betAmount = 0;
   await new Promise(resolve => {
     document.getElementById("betConfirmBtn").onclick = () => {
@@ -891,34 +824,18 @@ playBtn.addEventListener("click", async function () {
     };
   });
 
-  if (musicStarted) {
-    bgMusic.pause();
-  }
+  if (musicStarted) bgMusic.pause();
 
   matchmakingPopup.classList.remove("hidden");
 
   const randval = Math.random() * 500 + 100;
 
-  const response  = await fetch('/api/findMatch', {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
-  });
-
-  const data = await response.json();
-  
-  const response2  = await fetch('/api/me', {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
-  });
-
-  const data2 = await response2.json();
-
-  const response3 = await fetch(`/api/playerInfo`, {
-    method: 'GET',
-    headers: { 'Content-Type': 'application/json' },
-  });
-
-  const data3 = await response3.json();
+  const response  = await fetch('/api/findMatch', { method: 'GET', headers: { 'Content-Type': 'application/json' } });
+  const data      = await response.json();
+  const response2 = await fetch('/api/me',        { method: 'GET', headers: { 'Content-Type': 'application/json' } });
+  const data2     = await response2.json();
+  const response3 = await fetch('/api/playerInfo',{ method: 'GET', headers: { 'Content-Type': 'application/json' } });
+  const data3     = await response3.json();
 
   await sleep(randval);
 
@@ -931,10 +848,6 @@ playBtn.addEventListener("click", async function () {
   matchmakingPopup2.classList.add("hidden");
   playScreen.classList.remove("hidden");
 
-  console.log("Matched with:", data.username);
-  console.log("Your username:", data2.user.username);
-  console.log("Bet amount:", betAmount);
-
   const enemyBanner = document.getElementById("enemy-banner");
   const playerBanner = document.getElementById("player-banner");
 
@@ -945,7 +858,6 @@ playBtn.addEventListener("click", async function () {
   enemyBanner.style.backgroundImage = "url('" + getProfileBanner(data.banner) + "')";
   playerBanner.style.backgroundImage = "url('" + getProfileBanner(data3.banner) + "')";
 
-  // Show bet amount on play screen
   const betDisplay = document.getElementById("betAmountDisplay");
   if (betDisplay) betDisplay.textContent = "BET: $" + betAmount;
 
@@ -955,13 +867,11 @@ playBtn.addEventListener("click", async function () {
   paperBtn.disabled = false;
   scissorsBtn.disabled = false;
 
-  rockBtn.addEventListener("click", function() { moveSelected = 1; });
-  paperBtn.addEventListener("click", function() { moveSelected = 2; });
-  scissorsBtn.addEventListener("click", function() { moveSelected = 3; });
+  rockBtn.addEventListener("click", function () { moveSelected = 1; });
+  paperBtn.addEventListener("click", function () { moveSelected = 2; });
+  scissorsBtn.addEventListener("click", function () { moveSelected = 3; });
 
-  while (!moveSelected) {
-    await sleep(100);
-  }
+  while (!moveSelected) { await sleep(100); }
 
   rockBtn.disabled = true;
   paperBtn.disabled = true;
@@ -975,9 +885,8 @@ playBtn.addEventListener("click", async function () {
 
   const countdownInterval = setInterval(() => {
     count--;
-    // Re-trigger pulse animation each tick
     countdownPopup.style.animation = "none";
-    countdownPopup.offsetHeight; // reflow
+    countdownPopup.offsetHeight;
     countdownPopup.style.animation = "";
     timer.textContent = count > 0 ? count : "GO!";
     if (count <= 0) {
@@ -1007,7 +916,6 @@ playBtn.addEventListener("click", async function () {
 
   let winner = determineWinner(moveSelected, data.selection);
 
-  // Apply glow to winner card
   if (winner === "win") {
     playerSelection.style.boxShadow = "0 0 50px rgba(0,255,100,0.9)";
     enemySelection.style.opacity = "0.45";
@@ -1018,8 +926,6 @@ playBtn.addEventListener("click", async function () {
 
   await sleep(500);
 
-  // Apply powerup before showing popup
-  console.log("powerups available:", data3.powerups);
   if (winner !== "win" && data3.powerups > 0) {
     const powerupsLeft = data3.powerups - 1;
     winner = "win";
@@ -1032,19 +938,17 @@ playBtn.addEventListener("click", async function () {
 
   const moneyChange = determineMoneyChange(winner, betAmount);
 
-  // Play result sound
   if (winner === "win")       playWinSound();
   else if (winner === "loss") playLossSound();
   else                        playDrawSound();
 
-  // Show victory popup with correct class
   victoryPopup.className = "victory-popup " + (
     winner === "win"  ? "win-popup"  :
     winner === "loss" ? "loss-popup" : "draw-popup"
   );
   const vDisplay = document.getElementById("vDisplay");
   vDisplay.textContent =
-    winner === "win"  ? (data3.powerups > 0 ? "Cheated!" : "You win!") :
+    winner === "win"  ? "You win!" :
     winner === "loss" ? "You lose!" : "Draw!";
 
   document.getElementById("vMoney").textContent =
@@ -1054,7 +958,6 @@ playBtn.addEventListener("click", async function () {
   await sleep(3200);
 
   victoryPopup.className = "victory-popup hidden";
-  playScreen.classList.add("hidden");
   playArea.classList.remove("hidden");
   playerSelection.classList.add("hidden");
   enemySelection.classList.add("hidden");
@@ -1086,40 +989,28 @@ function determineMoneyChange(result, betAmount) {
 }
 
 function determineWinner(playerMove, enemyMove) {
-  if (playerMove === enemyMove) {
-    return "draw";
-  } else if (
+  if (playerMove === enemyMove) return "draw";
+  if (
     (playerMove === 1 && enemyMove === 3) ||
     (playerMove === 2 && enemyMove === 1) ||
     (playerMove === 3 && enemyMove === 2)
-  ) {
-    return "win";
-  } else {
-    return "loss";
-  }
+  ) return "win";
+  return "loss";
 }
 
 function getProfilePicture(pfp) {
-    if (!pfp) {
-        return "static/images/pfps/1.png";
-    } else {
-        return "static/images/pfps/" + pfp + ".png";
-    }
-}
-function getProfileBanner(banner) {
-    if (!banner) {
-        return "static/banners/1.png";
-    } else {
-        return "static/banners/" + banner + ".png";
-    }
+  return pfp ? `static/images/pfps/${pfp}.png` : "static/images/pfps/1.png";
 }
 
-async function loadProfile(){ 
+function getProfileBanner(banner) {
+  return banner ? `static/banners/${banner}.png` : "static/banners/1.png";
+}
+
+async function loadProfile() {
   const response = await fetch(`/api/playerInfo`, {
     method: 'GET',
     headers: { 'Content-Type': 'application/json' },
   });
-
   const data = await response.json();
   userBanner.querySelector("h1").textContent = data.username;
   userBanner.querySelector("img").src = getProfilePicture(data.pfp);
