@@ -235,8 +235,6 @@ loginButton.addEventListener("click", async function () {
       userBanner.classList.remove("hidden");
       loadProfile();
       updateMarquee();
-      bPresses = 0;
-      blackMarketBtn.classList.add("hidden");
       await transitionTo(mainMenu, [loginScreen]);
       playMenuMusic();
     } else {
@@ -325,8 +323,8 @@ storeBtn.addEventListener("click", async function () {
   playStoreMusic();
 });
 
-const pfpAmount = 4;   // only 4 pfp images exist (1–4)
-const bannerAmount = 1; // only 1 banner image exists
+const pfpAmount = 10;   // only 10 pfp images exist (1–10)
+const bannerAmount = 5; // only 5 banner image exists
 
 // ── Toast notification ──────────────────────────────────────────────────
 let toastTimeout = null;
@@ -429,7 +427,7 @@ async function storeOptions() {
 
   // Shop: banners
   for (let i = 1; i <= bannerAmount; i++) {
-    const price   = Math.floor(randomMarketPrice() / 10);
+    const price   = Math.floor(randomMarketPrice() / 100);
     const isOwned = owned.banners.includes(i);
     const shopCard = buildShopCard(
       `static/banners/${i}.png`, `Banner ${i}`, price,
@@ -586,17 +584,20 @@ async function equipBanner(num, username) {
 }
 
 async function storeScrollEffect() {
+  console.log("WORKING");
   const pfpShopRow = document.getElementById("pfpShopRow");
-  const cardWidth  = 145;
+  const cardWidth  = 116;
   const baseOffset = cardWidth * pfpAmount;
-  pfpShopRow.style.transform = `translateX(0px)`;
+  pfpShopRow.style.transform = `translateX(${800}px)`;
+  pfpShopRow.style.width = baseOffset + 'px';
+  await sleep(300);
   while (!store.classList.contains("hidden")) {
     const matrix = getComputedStyle(pfpShopRow).transform;
     const offset = matrix !== "none" ? (parseInt(matrix.split(",")[4]) || 0) : 0;
     if (offset <= -baseOffset) {
-      pfpShopRow.style.transform = `translateX(${baseOffset}px)`;
+      pfpShopRow.style.transform = `translateX(${800}px)`;
     } else {
-      pfpShopRow.style.transform = `translateX(${offset - 1.5}px)`;
+      pfpShopRow.style.transform = `translateX(${offset - 3.5}px)`;
     }
     await sleep(16);
   }
@@ -825,8 +826,6 @@ async function checkLogin() {
       loginScreen.classList.add("hidden");
       mainMenu.classList.remove("hidden");
       userBanner.classList.remove("hidden");
-      bPresses = 0;
-      blackMarketBtn.classList.add("hidden");
       loadProfile();
       updateMarquee();
     }
