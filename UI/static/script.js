@@ -305,7 +305,7 @@ signupButton.addEventListener("click", async function () {
       showToast(data.error || "Signup failed", "error");
     }
   } catch (error) {
-    showToast("Invalid Username or Password", "error");
+    showToast("Network error", "error");
   }
 });
 
